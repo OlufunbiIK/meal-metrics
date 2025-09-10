@@ -11,6 +11,7 @@ interface AuthLayoutProps {
   onBackClick?: () => void;
   showRoleForm?: boolean;
   showForgotPassword?: boolean;
+  backgroundImageUrl?: string;
 }
 
 export default function AuthLayout({
@@ -22,9 +23,15 @@ export default function AuthLayout({
   onBackClick,
   showRoleForm = false,
   showForgotPassword = false,
+  backgroundImageUrl,
 }: AuthLayoutProps) {
   const [selectedRole, setSelectedRole] = React.useState("");
   const [selectedExperience, setSelectedExperience] = React.useState("");
+
+  // Default background image if none provided
+  const defaultBackground =
+    "/images/7e09f1ae7f5f6a41295497f9198e59bb477c2ca3.png";
+  const backgroundImage = backgroundImageUrl || defaultBackground;
 
   return (
     <div className="min-h-screen relative">
@@ -32,7 +39,7 @@ export default function AuthLayout({
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/7e09f1ae7f5f6a41295497f9198e59bb477c2ca3.png')`,
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${backgroundImage}')`,
         }}
       ></div>
 

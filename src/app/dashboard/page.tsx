@@ -12,8 +12,10 @@ import {
   Edit,
   MoreHorizontal,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter;
   // Sample data
   const inventoryItems = [
     {
@@ -63,35 +65,35 @@ const Dashboard = () => {
       name: "Jollof Rice",
       time: "1pm",
       ingredients: "Rice, tomatoes, bell peppers, onions, chicken",
-      image: "/api/placeholder/80/80",
+      image: "/images/side-view-pilaf-with-stewed-beef-meat-plate.jpg",
     },
     {
       name: "Egusi Soup",
       time: "5pm",
       ingredients: "Melon seeds, spinach, assorted meat, stockfish",
-      image: "/api/placeholder/80/80",
+      image: "/images/321a3a968ae71fe9c2042c2a2111583048599cca.png",
     },
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: any) => {
     switch (status) {
       case "Good":
-        return "bg-green-100 text-green-800";
+        return "bg-[#E1FCDA] text-[#217A09]";
       case "Low Stock":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-[#E3CF1A1A] text-[#958600]";
       case "Out of Stock":
-        return "bg-red-100 text-red-800";
+        return "bg-[#FEECDD] text-[#B15306]";
       case "Expired":
-        return "bg-red-100 text-red-800";
+        return "bg-[#FED9D9] text-[#A20404]";
       default:
         return "bg-gray-100 text-gray-800";
     }
   };
 
-  const handleTabChange = (tab) => {
+  const handleTabChange = (tab: any) => {
     console.log(`Switched to: ${tab}`);
     // Here you would typically handle routing
-    // router.push(`/dashboard/${tab.toLowerCase().replace(' ', '-')}`);
+    // router.push(`/dashboard/${tab.toLowerCase().replace(" ", "-")}`);
   };
 
   return (
@@ -99,12 +101,12 @@ const Dashboard = () => {
       {/* Dashboard Content */}
       <div className="space-y-4 sm:space-y-6 lg:space-y-6 bg-[#f8f8f8]">
         {/* Top Section with Stats and Meal Planner */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-2 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-2 sm:gap-6">
           {/* Stats Cards Section */}
-          <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2 lg:gap-3">
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2 lg:gap-3 h-full">
               {/* Inventory Status */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4 border shadow-sm">
+              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <h3 className="text-sm font-medium text-gray-600">
                     Inventory status
@@ -128,7 +130,7 @@ const Dashboard = () => {
               </div>
 
               {/* Pending Orders */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4 border shadow-sm">
+              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <h3 className="text-sm font-medium text-gray-600">
                     Pending Orders
@@ -152,7 +154,7 @@ const Dashboard = () => {
               </div>
 
               {/* Today's Meal */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4 border shadow-sm">
+              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <h3 className="text-sm font-medium text-gray-600">
                     Today's Meal
@@ -176,7 +178,7 @@ const Dashboard = () => {
               </div>
 
               {/* Active Staff */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4 border shadow-sm">
+              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <h3 className="text-sm font-medium text-gray-600">
                     Active Staff
@@ -202,25 +204,37 @@ const Dashboard = () => {
           </div>
 
           {/* Meal Planner Preview */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg border shadow-sm p-2 sm:p-4 h-full">
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-lg border-[#FFFFFF] border-[0.8px] p-2 sm:p-4 h-full flex flex-col">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Meal Planner Preview</h2>
+                <h2 className="text-lg font-semibold text-[20px] text-[#333333]">
+                  Meal Planner Preview
+                </h2>
               </div>
 
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-2 sm:space-y-3 flex-1">
                 {mealPlans.map((meal, index) => (
-                  <div key={index} className="border rounded-lg p-3 sm:p-4">
+                  <div
+                    key={index}
+                    className="border-[#DADADAB2] border-[0.8px] rounded-2xl p-2 sm:p-2 text-[#333333]"
+                  >
                     <div className="flex items-start space-x-3">
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 bg-orange-200 rounded-lg flex-shrink-0"></div>
+                      <div className="w-12 h-12 sm:w-20 sm:h-20 md:w-28 bg-orange-200 rounded-lg flex-shrink-0">
+                        <img
+                          src={meal.image}
+                          alt={meal.name}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate text-[18px]">
                           {meal.name}
                         </h3>
                         <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">
                           Meal Time: {meal.time}
                         </p>
-                        <p className="text-xs text-gray-500 line-clamp-2">
+                        <div className="bg-[#DADADAB2] w-full h-[0.5px] mb-2"></div>
+                        <p className="text-xs text-gray-500 line-clamp-2 text-[14px]">
                           <span className="font-medium">Ingredients: </span>
                           {meal.ingredients}
                         </p>
@@ -230,19 +244,18 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              <button className="w-full mt-4 text-teal-600 hover:text-teal-700 text-sm font-medium py-2 border border-teal-200 rounded-lg hover:bg-teal-50 transition-colors">
+              <button className="w-full mt-4 text-teal-600 shadow-sm hover:text-teal-700 text-sm font-medium py-2 border border-[#DADADA80] rounded-lg hover:bg-teal-50 transition-colors">
                 See all meal plans
               </button>
             </div>
           </div>
         </div>
-
         {/* Inventory Overview Section */}
-        <div className="bg-white rounded-lg border shadow-sm">
-          <div className="p-2 sm:p-3 border-b">
+        <div className="bg-white rounded-lg px-2 lg:px-4 border-white border-[0.8px]">
+          <div className="p-2 sm:py-4 sm:px-2">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <h2 className="text-lg font-semibold">Inventory Overview</h2>
-              <button className="flex items-center justify-center sm:justify-start space-x-2 text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors">
+              <button className="flex items-center justify-center sm:justify-start space-x-2 text-gray-500 hover:text-gray-700 bg-white rounded border-[0.8px] border-[#DBDFE4] hover:bg-gray-100 px-3 py-2 transition-colors">
                 <Filter className="h-4 w-4" />
                 <span className="text-sm">Filter</span>
                 <ChevronDown className="h-4 w-4" />
@@ -297,9 +310,9 @@ const Dashboard = () => {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden sm:block overflow-x-auto">
+          <div className="hidden sm:block overflow-x-auto rounded-t-xl">
             <table className="w-full rounded">
-              <thead className="bg-[#EFEFEFB2]">
+              <thead className="bg-[#EFEFEFB2] rounded-t-lg">
                 <tr>
                   <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Item Name
@@ -324,7 +337,7 @@ const Dashboard = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-200 text-[12px]">
                 {inventoryItems.map((item, index) => (
                   <tr key={index} className="hover:bg-gray-50">
                     <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">

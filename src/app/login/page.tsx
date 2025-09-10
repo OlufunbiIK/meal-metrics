@@ -129,6 +129,7 @@ export default function Login() {
   return (
     <AuthLayout
       title={`Welcome Back ${formData.userName ? `${userName}` : ""}!`}
+      backgroundImageUrl="/images/27a237ecd17dcd919d5b93ca8383b5068cddf388.png"
     >
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
         <FormInput

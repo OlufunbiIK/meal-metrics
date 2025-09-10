@@ -118,7 +118,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           ${isMobile ? "h-full" : ""}
         `}
       >
-        <div className="p-6">
+        <div className="p-6 border-b border-[#00000033] border-[0.5px]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <img src="./images/Star 1.svg" alt="Logo" className="" />
@@ -147,13 +147,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 key={index}
                 className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
                   isActive
-                    ? "bg-teal-600 text-white"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "bg-[#008080] text-white"
+                    : "text-[#474747] hover:bg-gray-100"
                 }`}
                 onClick={() => handleTabClick(item)}
               >
-                <Icon className={`h-5 w-5 ${isActive ? "text-black" : ""}`} />
-                <span className="text-sm font-medium">{item.label}</span>
+                <Icon
+                  className={`h-5 w-5 ${
+                    isActive ? "text-white" : "text-black"
+                  }`}
+                />
+                <span
+                  className={`text-[16px] font-medium ${
+                    isActive ? " text-white" : "text-[[#474747]"
+                  }`}
+                >
+                  {item.label}
+                </span>
               </button>
             );
           })}
@@ -180,7 +190,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <h1 className="text-xl md:text-[28px] font-bold text-gray-900">
                   Welcome back, {userName.split(" ")[0]}!
                 </h1>
-                <p className="text-gray-500 text-xs md:text-[18px] hidden sm:block">
+                <p className="text-gray-500 text-xs text-[15px] hidden sm:block">
                   Today, {getCurrentDate()}
                 </p>
               </div>
@@ -193,7 +203,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <input
                   type="text"
                   placeholder="Search"
-                  className="pl-10 pr-4 py-3 px-3 border border-gray-300 rounded-full text-[#BABABA] text-[12px] focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="pl-10 pr-4 py-3 px-3 bg-white rounded-full text-[#BABABA] text-[12px] focus:outline-none focus:ring-2 focus:ring-teal-500"
                 />
               </div>
 
