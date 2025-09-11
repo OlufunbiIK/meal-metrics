@@ -111,7 +111,13 @@ const Dashboard = () => {
                   <h3 className="text-sm font-medium text-gray-600">
                     Inventory status
                   </h3>
-                  <Package className="h-4 w-4 sm:h-5 sm:w-5 text-teal-500" />
+                  <div className="rounded-full p-4 bg-[#4FBFA314]">
+                    <img
+                      src="./images/bxs_box.svg"
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-[#4FBFA3"
+                      alt="item 1"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div>
@@ -135,7 +141,13 @@ const Dashboard = () => {
                   <h3 className="text-sm font-medium text-gray-600">
                     Pending Orders
                   </h3>
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500" />
+                  <div className="rounded-full p-4 bg-[#D7650712]">
+                    <img
+                      src="./images/raphael_cart.svg"
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
+                      alt="item 2"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div>
@@ -159,7 +171,13 @@ const Dashboard = () => {
                   <h3 className="text-sm font-medium text-gray-600">
                     Today's Meal
                   </h3>
-                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                  <div className="rounded-full p-4 bg-[#3B5AFB1A]">
+                    <img
+                      src="./images/solar_plate-bold.svg"
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
+                      alt="item 2"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div>
@@ -183,7 +201,13 @@ const Dashboard = () => {
                   <h3 className="text-sm font-medium text-gray-600">
                     Active Staff
                   </h3>
-                  <Users className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
+                  <div className="rounded-full p-4 bg-[#F2F1F1]">
+                    <img
+                      src="./images/game-icons_cook.svg"
+                      className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
+                      alt="item 2"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   <div>
