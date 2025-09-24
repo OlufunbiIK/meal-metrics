@@ -4,47 +4,73 @@ import React, { useState } from "react";
 import AuthLayout from "../components/shared/AuthLayout";
 import FormInput from "../components/shared/FormInput";
 import { useRouter } from "next/navigation";
+import { UserDataManager } from "../utils/UserDataHelper";
 
 export default function RoleAndPreference() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
+    role: "",
     allergies: "",
     preferences: "",
   });
 
   const [errors, setErrors] = useState({
+    role: "",
     allergies: "",
     preferences: "",
   });
 
   const [touched, setTouched] = useState({
+    role: false,
     allergies: false,
     preferences: false,
   });
 
+  const roles = [
+    "Kitchen Manager",
+    "Head Chef",
+    "Sous Chef",
+    "Line Cook",
+    "Prep Cook",
+    "Pastry Chef",
+    "Kitchen Assistant",
+    "Food Service Manager",
+    "Nutritionist",
+    "Administrator",
+  ];
+
   // Validation functions
+  const validateRole = (role: string) => {
+    if (!role) return "Role selection is required";
+    return "";
+  };
+
   const validateAllergies = (allergies: string) => {
-    if (!allergies) return "Allergies are required";
+    if (!allergies) return "Please specify allergies or write 'None'";
     return "";
   };
 
   const validatePreferences = (preferences: string) => {
-    if (!preferences) return "Preferences are required";
+    if (!preferences) return "Please specify preferences or write 'None'";
     return "";
   };
 
   // Check if form is valid
   const isFormValid = () => {
     return (
+      formData.role &&
       formData.preferences &&
       formData.allergies &&
+      !validateRole(formData.role) &&
       !validateAllergies(formData.allergies) &&
       !validatePreferences(formData.preferences)
     );
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setFormData({
@@ -55,8 +81,9 @@ export default function RoleAndPreference() {
     // Real-time validation
     if (touched[name as keyof typeof touched]) {
       let error = "";
-      if (name === "email") error = validatePreferences(value);
+      if (name === "role") error = validateRole(value);
       if (name === "allergies") error = validateAllergies(value);
+      if (name === "preferences") error = validatePreferences(value);
 
       setErrors({
         ...errors,
@@ -65,7 +92,9 @@ export default function RoleAndPreference() {
     }
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
 
     setTouched({
@@ -75,8 +104,9 @@ export default function RoleAndPreference() {
 
     // Validate on blur
     let error = "";
-    if (name === "email") error = validatePreferences(value);
+    if (name === "role") error = validateRole(value);
     if (name === "allergies") error = validateAllergies(value);
+    if (name === "preferences") error = validatePreferences(value);
 
     setErrors({
       ...errors,
@@ -89,38 +119,45 @@ export default function RoleAndPreference() {
 
     // Mark all fields as touched
     setTouched({
+      role: true,
       allergies: true,
       preferences: true,
     });
 
     // Validate all fields
+    const roleError = validateRole(formData.role);
     const allergiesError = validateAllergies(formData.allergies);
-    const emailError = validatePreferences(formData.preferences);
+    const preferencesError = validatePreferences(formData.preferences);
 
     setErrors({
+      role: roleError,
       allergies: allergiesError,
-      preferences: emailError,
+      preferences: preferencesError,
     });
 
     // Only submit if no errors
-    if (!allergiesError && !emailError) {
+    if (!roleError && !allergiesError && !preferencesError) {
       console.log("Form submitted:", formData);
-      // Before redirecting
-      sessionStorage.setItem("signupData", JSON.stringify(formData));
-      // Redirect to password page
+
+      // Store the role and preference data using the helper
+      UserDataManager.storeRoleData(formData);
+
+      // Redirect to login page
       router.push("/login");
     }
   };
 
   const handleBackClick = () => {
-    // Form-specific logic here
-    router.back("./password"); // or navigate('/previous-step')
+    router.back();
   };
 
   const subtitle = (
     <>
       Already have an account?{" "}
-      <a href="" className="text-teal-500 hover:text-teal-600 font-medium">
+      <a
+        href="/login"
+        className="text-teal-500 hover:text-teal-600 font-medium"
+      >
         Sign In
       </a>
     </>
@@ -136,10 +173,12 @@ export default function RoleAndPreference() {
       showRoleForm={true}
     >
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
+        {/* Role Selection Dropdown */}
+
         <FormInput
           type="text"
           name="allergies"
-          placeholder="Enter your Allergies"
+          placeholder="Enter your Allergies (or 'None')"
           value={formData.allergies}
           onChange={handleInputChange}
           onBlur={handleBlur}
@@ -150,7 +189,7 @@ export default function RoleAndPreference() {
         <FormInput
           type="text"
           name="preferences"
-          placeholder="Enter Other Preferences"
+          placeholder="Enter Other Preferences (or 'None')"
           value={formData.preferences}
           onChange={handleInputChange}
           onBlur={handleBlur}

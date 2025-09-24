@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import DashboardLayout from "../components/shared/DashboardLayout";
+import React, { useState } from "react";
 import {
   Package,
   ShoppingCart,
@@ -13,9 +12,13 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import MealPlansModal from "@/app/components/DashboardModal";
+import PopularRecipe from "@/app/components/PopularRecipes";
 
 const Dashboard = () => {
-  const router = useRouter;
+  const [isMealPlansOpen, setIsMealPlansOpen] = useState(false);
+  const router = useRouter();
   // Sample data
   const inventoryItems = [
     {
@@ -73,6 +76,18 @@ const Dashboard = () => {
       ingredients: "Melon seeds, spinach, assorted meat, stockfish",
       image: "/images/321a3a968ae71fe9c2042c2a2111583048599cca.png",
     },
+    {
+      name: "Jollof Rice",
+      time: "1pm",
+      ingredients: "Rice, tomatoes, bell peppers, onions, chicken",
+      image: "/images/side-view-pilaf-with-stewed-beef-meat-plate.jpg",
+    },
+    {
+      name: "Egusi Soup",
+      time: "5pm",
+      ingredients: "Melon seeds, spinach, assorted meat, stockfish",
+      image: "/images/321a3a968ae71fe9c2042c2a2111583048599cca.png",
+    },
   ];
 
   const getStatusColor = (status: any) => {
@@ -96,314 +111,219 @@ const Dashboard = () => {
     // router.push(`/dashboard/${tab.toLowerCase().replace(" ", "-")}`);
   };
 
+  // Handle settings click
+  const handleFavoriteClick = () => {
+    window.location.href = "/dashboard/favorites";
+  };
+
   return (
     <DashboardLayout activeTab="Dashboard" onTabChange={handleTabChange}>
       {/* Dashboard Content */}
       <div className="space-y-4 sm:space-y-6 lg:space-y-6 bg-[#f8f8f8]">
         {/* Top Section with Stats and Meal Planner */}
-        <div className="grid grid-cols-1 lg:grid-cols-7 gap-2 sm:gap-6">
-          {/* Stats Cards Section */}
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2 lg:gap-3 h-full">
-              {/* Inventory Status */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-sm font-medium text-gray-600">
-                    Inventory status
+        <div className="grid grid-cols-1 lg:grid-cols-7 gap-4 md:gap-6 items-stretch">
+          {/* Left Section */}
+          <div className="relative lg:col-span-4">
+            <div className="relative w-full h-[300px] md:h-[350px] lg:h-[350px] xl:h-[400px]">
+              <img
+                src="/images/7f5252a6396a178b4b0daaeddf39d5394b03b027.png"
+                alt=""
+                className="w-full h-full object-cover rounded-2xl md:rounded-3xl lg:rounded-4xl"
+              />
+              {/* Overlay content */}
+              <div className="absolute top-1/2 left-4 md:left-6 lg:left-8 transform -translate-y-1/2 max-w-xs lg:max-w-sm">
+                <div className="space-y-2 md:space-y-3">
+                  <h3 className="bg-[#F4F4F499] text-[10px] md:text-xs rounded-[30px] px-3 py-2 text-center inline-block">
+                    Our Specials
                   </h3>
-                  <div className="rounded-full p-4 bg-[#4FBFA314]">
+                  <h3 className="text-xl md:text-2xl lg:text-3xl text-white font-semibold leading-tight">
+                    Vegetable Salad
+                  </h3>
+                  <h4 className="text-white text-sm md:text-[12px] lg:text-[14px] leading-relaxed">
+                    Indulge in the Menu of the Week with a crisp and flavorful
+                    vegetable salad, perfect for a light, healthy meal
+                  </h4>
+                  <button
+                    onClick={() => router.push("/dashboard/recipes")}
+                    className="flex items-center justify-center space-x-2 text-white hover:text-gray-700 bg-[#008080] rounded border-[0.8px] border-[#008080] hover:bg-gray-100 px-4 py-2 xl:px-6 xl:py-3 transition-colors text-sm xl:text-base font-medium mt-4"
+                  >
+                    View Recipe
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Favorites Card */}
+          <div className="lg:col-span-3 bg-[#004949] rounded-[30px] p-6 flex flex-col justify-center items-center h-[300px] md:h-[350px] lg:h-[350px] xl:h-[400px]">
+            <div className="flex flex-col justify-center items-center text-center max-w-xs xl:max-w-sm">
+              <img
+                src="/images/d46bb41426f65649a5e6b33df2d4ea65282c3ce9.png"
+                alt="favorite"
+                className="w-[80px] sm:w-[90px] md:w-[100px] xl:w-[120px] mb-4 xl:mb-6"
+              />
+              <h3 className="text-white text-[18px] sm:text-[20px] xl:text-[24px] font-semibold mb-2 xl:mb-3">
+                Your Favorites
+              </h3>
+              <p className="text-white text-[14px] sm:text-[15px] xl:text-[16px] mb-4 xl:mb-6 leading-relaxed">
+                Quick access to your saved recipes
+              </p>
+              <button
+                onClick={handleFavoriteClick}
+                className="flex items-center justify-center space-x-2 text-white hover:text-gray-700 bg-[#00B4A9] rounded border-[0.8px] border-[#008080] hover:bg-gray-100 px-4 py-2 xl:px-6 xl:py-3 transition-colors text-[14px] xl:text-[16px] font-medium"
+              >
+                View All
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Section with Stats */}
+        <div className="grid grid-cols-1 gap-2 sm:gap-6 w-full">
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2 lg:gap-3 h-full">
+              {/* Stats Cards - with consistent image sizing */}
+              <div className="bg-white rounded-4xl p-2 sm:p-3 lg:p-4">
+                <div className="flex items-center gap-4 mb-3 sm:mb-4">
+                  <div className="rounded-[14px] p-4 bg-[#4FBFA314]">
                     <img
                       src="./images/bxs_box.svg"
                       className="h-4 w-4 sm:h-5 sm:w-5 text-[#4FBFA3"
                       alt="item 1"
                     />
                   </div>
+                  <h3 className="text-sm font-medium text-gray-600">
+                    Inventory status
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                  <div>
+                  <div className="border-r border-gray-200 pr-2 sm:pr-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Total Items in stock
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">120</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      120
+                    </div>
                   </div>
-                  <div>
+                  <div className="pl-2 sm:pl-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Out of stock items
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">5</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      5
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Pending Orders */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-sm font-medium text-gray-600">
-                    Pending Orders
-                  </h3>
-                  <div className="rounded-full p-4 bg-[#D7650712]">
+              <div className="bg-white rounded-4xl p-2 sm:p-3 lg:p-4">
+                <div className="flex items-center gap-4 mb-3 sm:mb-4">
+                  <div className="rounded-[14px] p-4 bg-[#D7650712]">
                     <img
                       src="./images/raphael_cart.svg"
                       className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
                       alt="item 2"
                     />
                   </div>
+                  <h3 className="text-sm font-medium text-gray-600">
+                    Pending Orders
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                  <div>
+                  <div className="border-r border-gray-200 pr-2 sm:pr-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Orders Awaiting Delivery
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">8</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      8
+                    </div>
                   </div>
-                  <div>
+                  <div className="pl-2 sm:pl-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Orders Placed Today
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">3</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      3
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Today's Meal */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-sm font-medium text-gray-600">
-                    Today's Meal
-                  </h3>
-                  <div className="rounded-full p-4 bg-[#3B5AFB1A]">
+              <div className="bg-white rounded-4xl p-2 sm:p-3 lg:p-4">
+                <div className="flex items-center gap-4 mb-3 sm:mb-4">
+                  <div className="rounded-[14px] p-4 bg-[#3B5AFB1A]">
                     <img
                       src="./images/solar_plate-bold.svg"
                       className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
                       alt="item 2"
                     />
                   </div>
+                  <h3 className="text-sm font-medium text-gray-600">
+                    Today's Meal
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                  <div>
+                  <div className="border-r border-gray-200 pr-2 sm:pr-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Total Meals Planned
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">40</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      40
+                    </div>
                   </div>
-                  <div>
+                  <div className="pl-2 sm:pl-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Special Diets Included
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">10</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      10
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Active Staff */}
-              <div className="bg-white rounded-lg p-2 sm:p-3 lg:p-4">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h3 className="text-sm font-medium text-gray-600">
-                    Active Staff
-                  </h3>
-                  <div className="rounded-full p-4 bg-[#F2F1F1]">
+              <div className="bg-white rounded-4xl p-2 sm:p-3 lg:p-4">
+                <div className="flex items-center gap-4 mb-3 sm:mb-4">
+                  <div className="rounded-[14px] p-4 bg-[#F2F1F1]">
                     <img
                       src="./images/game-icons_cook.svg"
                       className="h-4 w-4 sm:h-5 sm:w-5 text-orange-500"
                       alt="item 2"
                     />
                   </div>
+                  <h3 className="text-sm font-medium text-gray-600">
+                    Active Staff
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:gap-4">
-                  <div>
+                  <div className="border-r border-gray-200 pr-2 sm:pr-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Number of Staff Currently Working
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">15</div>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      15
+                    </div>
                   </div>
-                  <div>
+                  <div className="pl-2 sm:pl-4">
                     <div className="text-xs text-gray-500 mb-1">
                       Scheduled for Today
                     </div>
-                    <div className="text-xl sm:text-2xl font-bold">5</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Meal Planner Preview */}
-          <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg border-[#FFFFFF] border-[0.8px] p-2 sm:p-4 h-full flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-[20px] text-[#333333]">
-                  Meal Planner Preview
-                </h2>
-              </div>
-
-              <div className="space-y-2 sm:space-y-3 flex-1">
-                {mealPlans.map((meal, index) => (
-                  <div
-                    key={index}
-                    className="border-[#DADADAB2] border-[0.8px] rounded-2xl p-2 sm:p-2 text-[#333333]"
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="w-12 h-12 sm:w-20 sm:h-20 md:w-28 bg-orange-200 rounded-lg flex-shrink-0">
-                        <img
-                          src={meal.image}
-                          alt={meal.name}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate text-[18px]">
-                          {meal.name}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-500 mb-1 sm:mb-2">
-                          Meal Time: {meal.time}
-                        </p>
-                        <div className="bg-[#DADADAB2] w-full h-[0.5px] mb-2"></div>
-                        <p className="text-xs text-gray-500 line-clamp-2 text-[14px]">
-                          <span className="font-medium">Ingredients: </span>
-                          {meal.ingredients}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button className="w-full mt-4 text-teal-600 shadow-sm hover:text-teal-700 text-sm font-medium py-2 border border-[#DADADA80] rounded-lg hover:bg-teal-50 transition-colors">
-                See all meal plans
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* Inventory Overview Section */}
-        <div className="bg-white rounded-lg px-2 lg:px-4 border-white border-[0.8px]">
-          <div className="p-2 sm:py-4 sm:px-2">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <h2 className="text-lg font-semibold">Inventory Overview</h2>
-              <button className="flex items-center justify-center sm:justify-start space-x-2 text-gray-500 hover:text-gray-700 bg-white rounded border-[0.8px] border-[#DBDFE4] hover:bg-gray-100 px-3 py-2 transition-colors">
-                <Filter className="h-4 w-4" />
-                <span className="text-sm">Filter</span>
-                <ChevronDown className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Card View */}
-          <div className="block sm:hidden">
-            <div className="divide-y divide-gray-200">
-              {inventoryItems.map((item, index) => (
-                <div key={index} className="p-4 hover:bg-gray-50">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-3 flex-1">
-                      <div className="text-2xl">{item.image}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="font-medium text-gray-900 truncate">
-                            {item.name}
-                          </h3>
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              item.status
-                            )}`}
-                          >
-                            {item.status}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-1">
-                          Quantity: {item.quantity}
-                        </p>
-                        <p className="text-sm text-gray-500 mb-1">
-                          Storage: {item.storage}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          Updated: {item.lastUpdated}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2 ml-3">
-                      <button className="p-1 hover:bg-gray-200 rounded">
-                        <Edit className="h-4 w-4 text-gray-400" />
-                      </button>
-                      <button className="p-1 hover:bg-gray-200 rounded">
-                        <MoreHorizontal className="h-4 w-4 text-gray-400" />
-                      </button>
+                    <div className="text-xl sm:text-2xl font-bold text-[#333333]">
+                      5
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-
-          {/* Desktop Table View */}
-          <div className="hidden sm:block overflow-x-auto rounded-t-xl">
-            <table className="w-full rounded">
-              <thead className="bg-[#EFEFEFB2] rounded-t-lg">
-                <tr>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Item Name
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Image
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Quantity
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Storage Location
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                    Last Updated
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-4 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200 text-[12px]">
-                {inventoryItems.map((item, index) => (
-                  <tr key={index} className="hover:bg-gray-50">
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {item.name}
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-2xl">
-                      {item.image}
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.quantity}
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.storage}
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden lg:table-cell">
-                      {item.lastUpdated}
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                          item.status
-                        )}`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="px-4 lg:px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                      <div className="flex items-center space-x-2">
-                        <button className="hover:text-gray-600 p-1 hover:bg-gray-200 rounded">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="hover:text-gray-600 p-1 hover:bg-gray-200 rounded">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
+      </div>
+
+      <div className="md:mt-10 mt-2">
+        <PopularRecipe />
       </div>
     </DashboardLayout>
   );

@@ -4,24 +4,26 @@ import React, { useEffect, useState } from "react";
 import AuthLayout from "../components/shared/AuthLayout";
 import FormInput from "../components/shared/FormInput";
 import { useRouter } from "next/navigation";
+import { UserDataManager } from "../utils/UserDataHelper";
 
 export default function Login() {
   const router = useRouter();
+
   const [userName, setUserName] = useState("");
 
   const [formData, setFormData] = useState({
-    password: "",
     email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({
-    password: "",
     email: "",
+    password: "",
   });
 
   const [touched, setTouched] = useState({
-    password: false,
     email: false,
+    password: false,
   });
 
   // Get user name from sessionStorage on component mount
@@ -30,8 +32,10 @@ export default function Login() {
     if (signupData) {
       try {
         const parsedData = JSON.parse(signupData);
-        if (parsedData.fullname) {
-          setUserName(parsedData.fullname);
+        if (parsedData.fullName) {
+          setUserName(parsedData.fullName);
+        } else if (parsedData.firstName) {
+          setUserName(parsedData.firstName);
         }
         if (parsedData.email) {
           setFormData((prev) => ({ ...prev, email: parsedData.email }));
@@ -43,25 +47,26 @@ export default function Login() {
   }, []);
 
   // Validation functions
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) return "Email is required";
+    if (!emailRegex.test(email)) return "Please enter a valid email address";
+    return "";
+  };
+
   const validatePassword = (password: string) => {
     if (!password) return "Password is required";
     if (password.length < 8) return "Password must be at least 8 characters";
     return "";
   };
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) return "Email is required";
-    if (!emailRegex.test(email)) return "Please enter your email address";
-    return "";
-  };
-
+  // Check if form is valid
   const isFormValid = () => {
     return (
       formData.email &&
       formData.password &&
-      !validatePassword(formData.password) &&
-      !validateEmail(formData.email)
+      !validateEmail(formData.email) &&
+      !validatePassword(formData.password)
     );
   };
 
@@ -73,6 +78,7 @@ export default function Login() {
       [name]: value,
     });
 
+    // Real-time validation if field has been touched
     if (touched[name as keyof typeof touched]) {
       let error = "";
       if (name === "email") error = validateEmail(value);
@@ -93,6 +99,7 @@ export default function Login() {
       [name]: true,
     });
 
+    // Validate on blur
     let error = "";
     if (name === "email") error = validateEmail(value);
     if (name === "password") error = validatePassword(value);
@@ -106,29 +113,70 @@ export default function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Mark all fields as touched
     setTouched({
-      password: true,
       email: true,
+      password: true,
     });
 
-    const passwordError = validatePassword(formData.password);
+    // Validate all fields
     const emailError = validateEmail(formData.email);
+    const passwordError = validatePassword(formData.password);
 
     setErrors({
-      password: passwordError,
       email: emailError,
+      password: passwordError,
     });
 
-    if (!passwordError && !emailError) {
-      console.log("Form submitted:", formData);
-      sessionStorage.setItem("signupData", JSON.stringify(formData));
-      router.push("/dashboard");
+    // Only proceed if no errors
+    if (!emailError && !passwordError) {
+      console.log("Login form submitted:", formData);
+
+      // For local storage approach (no API)
+      try {
+        // Check if this is a user coming from signup flow
+        const signupData = UserDataManager.getAllUserData();
+
+        if (signupData.firstName || signupData.email) {
+          // This is a new user completing signup flow
+          // Finalize their data by moving from session to local storage
+          const userData = UserDataManager.finalizeUserData();
+
+          // Store a simple auth token (you can make this more sophisticated)
+          localStorage.setItem("authToken", "logged-in-" + Date.now());
+
+          console.log("User data finalized:", userData);
+        } else {
+          // This is an existing user - for now, we'll create a simple user object
+          // In a real app, you'd validate credentials against your database
+          const userData = {
+            firstName: "Returning",
+            lastName: "User",
+            fullName: "Returning User",
+            email: formData.email,
+            role: "User",
+          };
+          localStorage.setItem("userData", JSON.stringify(userData));
+          localStorage.setItem("authToken", "logged-in-" + Date.now());
+        }
+
+        // Redirect to dashboard
+        router.push("/dashboard");
+      } catch (error) {
+        console.error("Login error:", error);
+        // Handle error appropriately
+      }
     }
+  };
+
+  const handleGoogleSignIn = () => {
+    console.log("Sign in with Google clicked");
+    // Implement Google sign-in logic here
   };
 
   return (
     <AuthLayout
-      title={`Welcome Back ${formData.userName ? `${userName}` : ""}!`}
+      title={`Welcome Back${userName ? ` ${userName}` : ""}!`}
       backgroundImageUrl="/images/27a237ecd17dcd919d5b93ca8383b5068cddf388.png"
     >
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
@@ -183,11 +231,11 @@ export default function Login() {
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        {/* Google sign up button */}
+        {/* Google sign in button */}
         <button
           type="button"
           className="w-full py-3 sm:py-4 rounded-xl border border-gray-300 flex items-center justify-center gap-2 hover:bg-gray-50 transition"
-          onClick={() => console.log("Sign up with Google clicked")}
+          onClick={handleGoogleSignIn}
         >
           {/* Google SVG logo */}
           <svg
