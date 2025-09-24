@@ -287,7 +287,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       </div>
 
       {/* Mobile Layout */}
-      <div className="flex md:hidden flex-col gap-3">
+      <div className="flex md:hidden flex-col items-center gap-3">
         {/* Entries info */}
         <div className="text-center text-sm text-gray-600">
           Showing {startEntry}-{endEntry} of {totalEntries} entries
@@ -296,7 +296,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         {/* Pagination controls */}
         {totalPages > 1 && (
           <div className="flex justify-center">
-            <div className="inline-flex shadow-sm rounded-md">
+            <div className="inline-flex items-center gap-1">
               <PageButton
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -304,7 +304,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 <ChevronLeft className="w-4 h-4" />
               </PageButton>
 
-              <div className="min-w-[80px] h-10 px-3 text-sm font-medium bg-[#F9FAFB] text-white border border-[#F9FAFB] -ml-px flex items-center justify-center">
+              <div className="min-w-[80px] h-10 px-3 text-sm font-medium bg-[#F9FAFB] text-black border border-[#F9FAFB] -ml-px flex items-center justify-center">
                 {currentPage} of {totalPages}
               </div>
 
