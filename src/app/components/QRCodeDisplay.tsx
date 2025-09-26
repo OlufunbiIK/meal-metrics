@@ -3,10 +3,10 @@
 "use clients";
 import React from "react";
 import { ShoppingItem } from "@/app/types";
-import { EditItemModal } from "@/app/components/EditItemModal";
+import { EditItemModal } from "@/app/modals/EditItemModal";
 import { QRScanner } from "@/app/components/QRScanner";
 import { ItemCard } from "@/app/components/ItemCars";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 
 interface QRCodeDisplayProps {
   isOpen: boolean;

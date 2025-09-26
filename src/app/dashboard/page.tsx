@@ -12,8 +12,8 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
-import MealPlansModal from "@/app/components/DashboardModal";
+import DashboardLayout from "@/app/layout/DashboardLayout";
+import MealPlansModal from "@/app/modals/DashboardModal";
 import PopularRecipe from "@/app/components/PopularRecipes";
 
 const Dashboard = () => {

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Plus, Edit, Trash2, Calendar, Users, Filter } from "lucide-react";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 import { useRouter } from "next/navigation";
 
 // Types

@@ -12,10 +12,11 @@ import {
   X,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 import { inventoryItems } from "../../data/AllMeals";
-import { AddItemModal } from "@/app/components/AddItemModal";
+import { AddItemModal } from "@/app/modals/AddItemModal";
 import { Pagination } from "@/app/components/Pagination";
+import { DetailsModal } from "@/app/modals/DetailsModal";
 
 // Define the shape of an inventory item
 interface InventoryItem {
@@ -36,6 +37,7 @@ interface InventoryItem {
   supplierEmail?: string;
   supplierPhone?: string;
   supplierAddress?: string;
+  quantityPurchased?: string;
 }
 
 interface Filters {
@@ -43,304 +45,6 @@ interface Filters {
   storage: string[];
   category: string[];
 }
-
-// Details Modal Component
-const DetailsModal: React.FC<{
-  item: InventoryItem | null;
-  isOpen: boolean;
-  onClose: () => void;
-}> = ({ item, isOpen, onClose }) => {
-  if (!isOpen || !item) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/30 backdrop-blur-sm transition-opacity">
-      {/* Drawer */}
-      <div className="bg-white w-96 h-full shadow-lg overflow-y-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <h2 className="text-xl font-semibold text-gray-900">
-              {item?.name} Details
-            </h2>
-          </div>
-
-          {/* Status and Quantity */}
-          <div className="mb-6">
-            <div className="flex flex-row gap-5 items-center">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[16px] font-medium text-[#333333]">
-                  Status:
-                </span>
-                <span
-                  className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                    item.status === "Good"
-                      ? "bg-green-100 text-green-800"
-                      : item.status === "Low Stock"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : item.status === "Out of Stock"
-                      ? "bg-orange-100 text-orange-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {item.status}
-                </span>
-              </div>
-              <div className="w-[0.5px] h-5 bg-[#333333]"></div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-600">
-                  Quantity:
-                </span>
-                <span className="text-sm text-gray-900">{item.quantity}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Supplier Information */}
-          <div className="mb-6 border border-[#EEEEEE] px-4 py-4">
-            <h3 className="text-lg font-medium text-[#0A0B0B] text-[14px] mb-3">
-              Supplier Information
-            </h3>
-            <div className="space-y-3">
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Name:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.supplierName || "Best Foods Supplier Co."}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Email:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.supplierEmail || "supplier@bestfoods.com"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Phone:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.supplierPhone || "+234 800 1234 5678"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Address:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.supplierAddress || "23 Food Street, Lagos, Nigeria"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Other Information */}
-          <div className="mb-6">
-            <h3 className="text-[14px] font-medium text-[#0A0B0B] mb-3">
-              Other Information
-            </h3>
-            <div className="space-y-3">
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Mfd Date:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.mfgDate || "July 1, 2024"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Best Before:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.bestBefore || "September 31, 2024"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Temperature:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.temperature || "Store in a cool, dry place (15-25°C)"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Purchase Date:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.purchaseDate || "July 1, 2024"}
-                </p>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="text-sm font-medium text-[#000000]">
-                  Cost:
-                </span>
-                <p className="text-sm text-[#000000]">
-                  {item.cost || `${item.quantity} kg for ₦200,000`}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Storage Location */}
-          <div className="mb-6 flex flex-row gap-2">
-            <span className="text-sm font-medium text-[#000000]">
-              Storage Location:
-            </span>
-            <p className="text-sm text-gray-900">{item.storage}</p>
-          </div>
-
-          {/* Last Updated */}
-          <div className="flex flex-row gap-2">
-            <span className="text-sm font-medium text-[#000000]">
-              Last Updated:
-            </span>
-            <p className="text-sm text-gray-900">{item.lastUpdated}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Edit Modal Component
-const EditModal: React.FC<{
-  item: InventoryItem | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (updatedItem: InventoryItem) => void;
-}> = ({ item, isOpen, onClose, onSave }) => {
-  const [formData, setFormData] = useState<InventoryItem>({
-    name: "",
-    status: "",
-    storage: "",
-    quantity: 0,
-    lastUpdated: "",
-    image: "",
-  });
-
-  useEffect(() => {
-    if (item) {
-      setFormData(item);
-    }
-  }, [item]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave({ ...formData, lastUpdated: new Date().toLocaleDateString() });
-    onClose();
-  };
-
-  if (!isOpen || !item) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Edit Item</h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Item Name
-            </label>
-            <input
-              type="text"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Quantity
-            </label>
-            <input
-              type="number"
-              value={formData.quantity}
-              onChange={(e) =>
-                setFormData({ ...formData, quantity: Number(e.target.value) })
-              }
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
-            </label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              required
-            >
-              <option value="Good">Good</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-              <option value="Expired">Expired</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Storage Location
-            </label>
-            <select
-              value={formData.storage}
-              onChange={(e) =>
-                setFormData({ ...formData, storage: e.target.value })
-              }
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-              required
-            >
-              <option value="Pantry">Pantry</option>
-              <option value="Freezer">Freezer</option>
-              <option value="Refrigerator">Refrigerator</option>
-              <option value="Storage Room">Storage Room</option>
-            </select>
-          </div>
-
-          <div className="flex space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
 
 // Confirmation Modal Component
 const ConfirmationModal: React.FC<{
@@ -380,7 +84,6 @@ export default function Inventory() {
   const [items, setItems] = useState<InventoryItem[]>(
     inventoryItems.map((item, index) => ({ ...item, id: index.toString() }))
   );
-  const [isMealPlansOpen, setIsMealPlansOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<Filters>({
     status: [],
@@ -409,10 +112,10 @@ export default function Inventory() {
     setViewMore(viewMore === index ? null : index);
   }
 
-  // Handle delete item
   const handleDeleteItem = (item: InventoryItem) => {
-    setSelectedItem(item);
+    setSelectedItem(item); // Make sure this is set BEFORE opening the modal
     setIsDeleteModalOpen(true);
+    setIsDetailsModalOpen(false); // Close details modal if open
     setViewMore(null);
   };
 
@@ -427,15 +130,9 @@ export default function Inventory() {
   // Handle edit item
   const handleEditItem = (item: InventoryItem) => {
     setSelectedItem(item);
+    setIsDetailsModalOpen(false);
     setIsEditModalOpen(true);
     setViewMore(null);
-  };
-
-  const handleSaveEdit = (updatedItem: InventoryItem) => {
-    setItems(
-      items.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
-    setSelectedItem(null);
   };
 
   // Handle view details
@@ -443,6 +140,23 @@ export default function Inventory() {
     setSelectedItem(item);
     setIsDetailsModalOpen(true);
     setViewMore(null);
+  };
+
+  const handleSaveEdit = (updatedForm: FormData) => {
+    if (!selectedItem) return;
+
+    setItems((prev) =>
+      prev.map((it) =>
+        it.id === selectedItem.id
+          ? {
+              ...it,
+              ...updatedForm,
+              quantity: parseInt(updatedForm.quantity) || 0,
+              lastUpdated: new Date().toLocaleDateString(),
+            }
+          : it
+      )
+    );
   };
 
   useEffect(() => {
@@ -591,6 +305,28 @@ export default function Inventory() {
         return "bg-[#FED9D9] text-[#A20404]";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getCategoryEmoji = (category: string): string => {
+    switch (category.toLowerCase()) {
+      case "food":
+      case "grains":
+        return "🌾";
+      case "beverages":
+        return "🥤";
+      case "spices":
+        return "🌶️";
+      case "dairy":
+        return "🥛";
+      case "meat":
+        return "🥩";
+      case "vegetables":
+        return "🥬";
+      case "fruits":
+        return "🍎";
+      default:
+        return "📦";
     }
   };
 
@@ -761,7 +497,7 @@ export default function Inventory() {
                         <h3 className="font-semibold text-gray-800">Filters</h3>
                         <button
                           onClick={() => setShowFilterDropdown(false)}
-                          className="text-gray-400 hover:text-gray-600"
+                          className="text-gray-400 cursor-pointer hover:text-gray-600"
                         >
                           <X className="h-4 w-4" />
                         </button>
@@ -848,7 +584,7 @@ export default function Inventory() {
                       {/* Clear Filters Button */}
                       <button
                         onClick={clearAllFilters}
-                        className="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm"
+                        className="w-full py-2 px-4 cursor-pointer bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors text-sm"
                       >
                         Clear All Filters
                       </button>
@@ -856,21 +592,66 @@ export default function Inventory() {
                   )}
                 </div>
 
+                {/* ➕ Add Items Button */}
                 <button
                   onClick={() => setIsAddItemModalOpen(true)}
-                  className="flex items-center justify-center whitespace-nowrap sm:justify-start space-x-2 text-white hover:text-gray-700 bg-[#008080] rounded border-[0.8px] border-[#DBDFE4] hover:bg-gray-100 px-3 py-2 transition-colors"
+                  className="flex items-center hover:bg-[#006666] justify-center cursor-pointer whitespace-nowrap sm:justify-start space-x-2 text-white bg-[#008080] rounded border-[0.8px] border-[#DBDFE4] px-3 py-2 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                   <span className="text-sm">Add Items</span>
                 </button>
+
+                {/* Add Modal */}
                 <AddItemModal
                   isOpen={isAddItemModalOpen}
                   onClose={() => setIsAddItemModalOpen(false)}
-                  onSubmit={(formData) => {
-                    console.log("Form submitted:", formData);
-                    // Handle form submission here
-                    setIsAddItemModalOpen(false);
+                  onAdd={(formData) => {
+                    const newItem: InventoryItem = {
+                      id: (items.length + 1).toString(),
+                      name: formData.itemName,
+                      status: formData.status,
+                      storage: formData.storageLocation,
+                      quantity: parseInt(formData.quantity) || 0,
+                      lastUpdated: new Date().toLocaleDateString(),
+                      image: getCategoryEmoji(formData.category),
+                      mfgDate: formData.mfdDate,
+                      bestBefore: formData.bestBefore,
+                      purchaseDate: formData.purchaseDate,
+                      cost: formData.cost,
+                      supplierName: formData.supplierName,
+                      supplierEmail: formData.supplierEmail,
+                      supplierPhone: formData.supplierPhone,
+                      supplierAddress: formData.supplierAddress,
+                    };
+
+                    setItems((prevItems) => [...prevItems, newItem]);
+                    console.log("New item added:", newItem);
                   }}
+                  mode="add"
+                />
+
+                {/* Edit Modal */}
+                <AddItemModal
+                  isOpen={isEditModalOpen}
+                  onClose={() => setIsEditModalOpen(false)}
+                  onEdit={handleSaveEdit}
+                  initialData={{
+                    itemName: selectedItem?.name || "",
+                    category: "",
+                    quantity: String(selectedItem?.quantity || ""),
+                    status: selectedItem?.status || "",
+                    storageLocation: selectedItem?.storage || "",
+                    supplierName: selectedItem?.supplierName || "",
+                    supplierEmail: selectedItem?.supplierEmail || "",
+                    supplierPhone: selectedItem?.supplierPhone || "",
+                    supplierAddress: selectedItem?.supplierAddress || "",
+                    purchaseDate: selectedItem?.purchaseDate || "",
+                    quantityPurchased: selectedItem?.quantityPurchased || "",
+                    cost: selectedItem?.cost || "",
+                    mfdDate: selectedItem?.mfgDate || "",
+                    bestBefore: selectedItem?.bestBefore || "",
+                  }}
+                  mode="edit"
                 />
               </div>
             </div>
@@ -1147,20 +928,12 @@ export default function Inventory() {
         <DetailsModal
           item={selectedItem}
           isOpen={isDetailsModalOpen}
+          onEditItem={handleEditItem}
+          onDeleteItem={handleDeleteItem}
           onClose={() => {
             setIsDetailsModalOpen(false);
             setSelectedItem(null);
           }}
-        />
-
-        <EditModal
-          item={selectedItem}
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setSelectedItem(null);
-          }}
-          onSave={handleSaveEdit}
         />
 
         <ConfirmationModal

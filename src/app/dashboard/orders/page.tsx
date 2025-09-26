@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import { Search, Plus, QrCode, Filter } from "lucide-react";
 import { ShoppingItem } from "@/app/types";
 import { ItemCard } from "@/app/components/ItemCars";
-import { EditItemModal } from "@/app/components/EditItemModal";
+import { EditItemModal } from "@/app/modals/EditItemModal";
 import { QRScanner } from "@/app/components/QRScanner";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 
 const ShoppingPage: React.FC = () => {
   const [items, setItems] = useState<ShoppingItem[]>([

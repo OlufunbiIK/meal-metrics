@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, X, Edit3, Trash2 } from "lucide-react";
-import { Pagination } from "./Pagination";
+import { Pagination } from "../components/Pagination";
 
 // Define MealPlan type
 interface MealPlan {

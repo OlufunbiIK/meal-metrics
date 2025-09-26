@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ChevronDown, Edit, Trash2, Calendar } from "lucide-react";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 
 // Define the Task type
 interface Task {

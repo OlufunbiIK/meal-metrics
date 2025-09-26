@@ -237,7 +237,7 @@ const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Notification Bell */}
-          <button className="relative p-3 bg-white rounded-full hover:text-gray-600">
+          <button className="relative w-10 h-10 p-2 flex justify-center items-center bg-white rounded-full hover:text-gray-600">
             <img src="/images/Group 54993.svg" alt="Notification Icon" />
           </button>
 

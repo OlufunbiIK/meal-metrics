@@ -1,5 +1,5 @@
 "use client";
-import DashboardLayout from "@/app/components/shared/DashboardLayout";
+import DashboardLayout from "@/app/layout/DashboardLayout";
 const handleTabChange = (tab: string) => {
   console.log(`Switched to: ${tab}`);
 };

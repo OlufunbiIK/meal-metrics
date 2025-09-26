@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import AuthLayout from "../components/shared/AuthLayout";
-import FormInput from "../components/shared/FormInput";
+import AuthLayout from "../layout/AuthLayout";
+import FormInput from "../layout/FormInput";
 import { useRouter } from "next/navigation";
 import { UserDataManager } from "../utils/UserDataHelper";
 
