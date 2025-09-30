@@ -12,6 +12,10 @@ interface AuthLayoutProps {
   showRoleForm?: boolean;
   showForgotPassword?: boolean;
   backgroundImageUrl?: string;
+  selectedRole?: string;
+  selectedExperience?: string;
+  onRoleChange?: (val: string) => void;
+  onExperienceChange?: (val: string) => void;
 }
 
 export default function AuthLayout({

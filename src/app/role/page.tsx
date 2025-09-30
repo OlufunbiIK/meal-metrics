@@ -1,44 +1,28 @@
 "use client";
 
 import React, { useState } from "react";
-import AuthLayout from "../layout/AuthLayout";
-import FormInput from "../layout/FormInput";
 import { useRouter } from "next/navigation";
 import { UserDataManager } from "../utils/UserDataHelper";
+import AuthLayout from "../layout/AuthLayout";
+import FormInput from "../layout/FormInput";
 
 export default function RoleAndPreference() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    role: "",
     allergies: "",
     preferences: "",
   });
 
   const [errors, setErrors] = useState({
-    role: "",
     allergies: "",
     preferences: "",
   });
 
   const [touched, setTouched] = useState({
-    role: false,
     allergies: false,
     preferences: false,
   });
-
-  const roles = [
-    "Kitchen Manager",
-    "Head Chef",
-    "Sous Chef",
-    "Line Cook",
-    "Prep Cook",
-    "Pastry Chef",
-    "Kitchen Assistant",
-    "Food Service Manager",
-    "Nutritionist",
-    "Administrator",
-  ];
 
   // Validation functions
   const validateRole = (role: string) => {
@@ -59,10 +43,8 @@ export default function RoleAndPreference() {
   // Check if form is valid
   const isFormValid = () => {
     return (
-      formData.role &&
       formData.preferences &&
       formData.allergies &&
-      !validateRole(formData.role) &&
       !validateAllergies(formData.allergies) &&
       !validatePreferences(formData.preferences)
     );
@@ -81,7 +63,6 @@ export default function RoleAndPreference() {
     // Real-time validation
     if (touched[name as keyof typeof touched]) {
       let error = "";
-      if (name === "role") error = validateRole(value);
       if (name === "allergies") error = validateAllergies(value);
       if (name === "preferences") error = validatePreferences(value);
 
@@ -104,7 +85,6 @@ export default function RoleAndPreference() {
 
     // Validate on blur
     let error = "";
-    if (name === "role") error = validateRole(value);
     if (name === "allergies") error = validateAllergies(value);
     if (name === "preferences") error = validatePreferences(value);
 
@@ -119,24 +99,21 @@ export default function RoleAndPreference() {
 
     // Mark all fields as touched
     setTouched({
-      role: true,
       allergies: true,
       preferences: true,
     });
 
     // Validate all fields
-    const roleError = validateRole(formData.role);
     const allergiesError = validateAllergies(formData.allergies);
     const preferencesError = validatePreferences(formData.preferences);
 
     setErrors({
-      role: roleError,
       allergies: allergiesError,
       preferences: preferencesError,
     });
 
     // Only submit if no errors
-    if (!roleError && !allergiesError && !preferencesError) {
+    if (!allergiesError && !preferencesError) {
       console.log("Form submitted:", formData);
 
       // Store the role and preference data using the helper

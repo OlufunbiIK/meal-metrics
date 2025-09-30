@@ -171,7 +171,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             </h2>
             <button
               onClick={onClose}
-              className="w-12 h-12 rounded-full bg-gray-100 absolute -left-20 flex items-center justify-center hover:bg-gray-200 transition-colors"
+              className="w-12 h-12 rounded-full bg-gray-100 absolute right-2 md:-left-20 flex items-center justify-center hover:bg-gray-200 transition-colors"
             >
               <X className="w-8 h-8 text-[#BABABA] font-regular" />
             </button>

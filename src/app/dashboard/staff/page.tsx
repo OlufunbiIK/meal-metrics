@@ -172,9 +172,9 @@ const KitchenStaffManager: React.FC = () => {
               <nav className="flex space-x-8">
                 <button
                   onClick={() => setActiveTab("assign")}
-                  className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-3 px-1 border-b-2 font-medium text-[16px] ${
                     activeTab === "assign"
-                      ? "border-teal-500 text-teal-600"
+                      ? "border-[#008080] text-[#008080]"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -182,9 +182,9 @@ const KitchenStaffManager: React.FC = () => {
                 </button>
                 <button
                   onClick={() => setActiveTab("roster")}
-                  className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-3 px-1 border-b-2 font-medium text-[16px] ${
                     activeTab === "roster"
-                      ? "border-teal-500 text-teal-600"
+                      ? "border-[#008080] text-[#008080]"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}
                 >
@@ -198,22 +198,22 @@ const KitchenStaffManager: React.FC = () => {
           {activeTab === "assign" && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Task Assignment Form */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
+              <div className="bg-white rounded-[30px] shadow-sm p-6">
+                <h2 className="text-[#333333] font-semibold text-[18px] border-b-[1px] py-3 border-b-[#EAE8E8] mb-6">
                   Assign Tasks to Kitchen Staff
                 </h2>
 
                 <div className="space-y-6">
                   {/* Select Task */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-[#474747] text-[14px] font-medium mb-2">
                       Select Task
                     </label>
                     <div className="relative">
                       <select
                         value={selectedTask}
                         onChange={(e) => setSelectedTask(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
+                        className="w-full px-3 py-2 border-[1px] border-[#D0D5DD] rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
                       >
                         <option value="">Choose a task...</option>
                         {taskOptions.map((task) => (
@@ -228,14 +228,14 @@ const KitchenStaffManager: React.FC = () => {
 
                   {/* Assigned Staff */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-[#474747] text-[14px] font-medium mb-2">
                       Assigned Staff
                     </label>
                     <div className="relative">
                       <select
                         value={selectedStaff}
                         onChange={(e) => setSelectedStaff(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
+                        className="w-full px-3 py-2 border-[1px] border-[#D0D5DD] rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
                       >
                         <option value="">Choose staff member...</option>
                         {staffOptions.map((staff) => (
@@ -250,14 +250,14 @@ const KitchenStaffManager: React.FC = () => {
 
                   {/* Start Time */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-[#474747] text-[14px] font-medium mb-2">
                       Start Time
                     </label>
                     <div className="relative">
                       <select
                         value={startTime}
                         onChange={(e) => setStartTime(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
+                        className="w-full px-3 py-2 border-[1px] border-[#D0D5DD] rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none"
                       >
                         <option value="">Select start time...</option>
                         {timeOptions.map((time) => (
@@ -272,7 +272,7 @@ const KitchenStaffManager: React.FC = () => {
 
                   {/* Duration */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-[#474747] text-[14px] font-medium mb-2">
                       Duration
                     </label>
                     <input
@@ -280,13 +280,13 @@ const KitchenStaffManager: React.FC = () => {
                       value={duration}
                       onChange={(e) => setDuration(e.target.value)}
                       placeholder="e.g., 2 hours"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border-[1px] border-[#D0D5DD] rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
 
                   {/* Task Description */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-[#474747] text-[14px] font-medium mb-2">
                       Task Description
                     </label>
                     <textarea
@@ -294,7 +294,7 @@ const KitchenStaffManager: React.FC = () => {
                       onChange={(e) => setDescription(e.target.value)}
                       rows={3}
                       placeholder="Enter task description..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border-[1px] border-[#D0D5DD] rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -314,13 +314,11 @@ const KitchenStaffManager: React.FC = () => {
               </div>
 
               {/* Task Preview */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Assigned Task Preview
-                </h3>
+              <div className="bg-white rounded-lg max-w-md max-h-100 overflow-y-auto border scrollbar-hide border-[#D0D5DD] p-6">
+                <h3 className="text-[16px] mb-4">Assigned Task Preview</h3>
 
                 {previewTask ? (
-                  <div className="space-y-3">
+                  <div className="space-y-6">
                     <div className="flex justify-between">
                       <span className="text-sm text-gray-600">Task Name:</span>
                       <span className="font-medium">{previewTask.name}</span>
@@ -353,7 +351,7 @@ const KitchenStaffManager: React.FC = () => {
                     </div>
 
                     <div className="flex justify-between mt-6">
-                      <button className="flex items-center px-4 py-2 text-gray-500 hover:text-gray-700">
+                      <button className="flex items-center px-4 py-2 rounded-[#DDDDDD]  text-gray-500 hover:text-gray-700">
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
                       </button>
@@ -376,7 +374,7 @@ const KitchenStaffManager: React.FC = () => {
           {activeTab === "roster" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Main Roster */}
-              <div className="lg:col-span-2 bg-white rounded-lg shadow-sm p-6">
+              <div className="lg:col-span-2 bg-white rounded-[30px] shadow-sm p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-gray-900">
                     Staff Work Roster
@@ -387,7 +385,7 @@ const KitchenStaffManager: React.FC = () => {
                       type="date"
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                      className="px-3 py-1 border border-gray-300 text-[#333333] rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                     />
                   </div>
                 </div>
