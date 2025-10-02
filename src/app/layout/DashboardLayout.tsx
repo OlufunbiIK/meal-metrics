@@ -53,7 +53,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     {
       icon: "ShoppingCart",
       label: "Orders & Shopping",
-      title: "Track Orders & Shopping",
+      title: "Shopping",
       href: "/dashboard/orders",
     },
     {
