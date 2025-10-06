@@ -7,6 +7,7 @@ export interface ShoppingItem {
   unit: string;
   price?: number;
   notes?: string;
+  storage?: string;
 }
 
 export interface Category {

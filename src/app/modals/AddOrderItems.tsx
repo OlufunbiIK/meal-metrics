@@ -1,19 +1,16 @@
-// app/modals/EditItemModal.tsx
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { ShoppingItem } from "../types";
-import { X, Edit } from "lucide-react";
+import { X, Upload } from "lucide-react";
 
-interface EditItemModalProps {
-  item: ShoppingItem | null;
+interface AddItemModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (item: ShoppingItem) => void;
 }
 
-export const EditItemModal: React.FC<EditItemModalProps> = ({
-  item,
+export const AddItemModal: React.FC<AddItemModalProps> = ({
   isOpen,
   onClose,
   onSave,
@@ -29,13 +26,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Load item data when modal opens
-  useEffect(() => {
-    if (item && isOpen) {
-      setFormData(item);
-    }
-  }, [item, isOpen]);
 
   const handleImageClick = () => {
     fileInputRef.current?.click();
@@ -53,9 +43,9 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
   };
 
   const handleSave = () => {
-    if (formData.name && item) {
+    if (formData.name) {
       const itemData: ShoppingItem = {
-        id: item.id, // Keep existing ID
+        id: Date.now().toString(),
         name: formData.name!,
         category: formData.category || "Uncategorized",
         quantity: formData.quantity || 1,
@@ -65,21 +55,45 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         storage: formData.storage || "",
       };
       onSave(itemData);
+      // Reset form after saving
+      setFormData({
+        name: "",
+        category: "",
+        quantity: 1,
+        unit: "pcs",
+        notes: "",
+        image: "/api/placeholder/60/60",
+        storage: "",
+      });
       onClose();
     }
   };
 
-  if (!isOpen || !item) return null;
+  const handleClose = () => {
+    // Reset form when closing
+    setFormData({
+      name: "",
+      category: "",
+      quantity: 1,
+      unit: "pcs",
+      notes: "",
+      image: "/api/placeholder/60/60",
+      storage: "",
+    });
+    onClose();
+  };
+
+  if (!isOpen) return null;
 
   return (
     <div
       className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center p-4 z-50"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div className="relative w-full max-w-md">
         {/* Close Button - Outside Modal */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute -top-16 right-0 md:right-0 text-white hover:text-gray-300 transition-colors bg-[#FFFFFF] bg-opacity-50 rounded-full p-2"
         >
           <X size={32} className="text-[#BABABA]" />
@@ -92,7 +106,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
         >
           <div className="flex items-center justify-left p-6">
             <h2 className="text-[#333333] text-[20px] font-bold text-left">
-              Edit Item
+              Add New Item
             </h2>
           </div>
 
@@ -101,11 +115,11 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               Item image
             </p>
             <div className="flex justify-left mb-4">
-              <div className="relative">
+              <div className="relative group">
                 <img
                   src={formData.image}
                   alt="Item"
-                  className="w-[120px] h-[95px] rounded-[5px] object-cover border-2 border-gray-200"
+                  className="w-[120px] h-[95px] rounded-[5px] object-cover border-2 border-dashed border-[#008080]"
                 />
                 <input
                   ref={fileInputRef}
@@ -117,10 +131,16 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                 <button
                   type="button"
                   onClick={handleImageClick}
-                  className="absolute bottom-1 right-1 bg-[#FFFFFF66] text-white rounded-[4px] p-1 hover:bg-[#008080] transition-colors"
+                  className="absolute inset-0 bg-[#008080] bg-opacity-0 hover:bg-opacity-20 transition-all rounded-[5px] flex items-center justify-center"
                 >
-                  <Edit size={16} />
+                  <Upload
+                    size={24}
+                    className="text-[#008080] opacity-0 group-hover:opacity-100 transition-opacity"
+                  />
                 </button>
+                <div className="absolute -bottom-6 left-0 text-xs text-gray-500">
+                  Click to upload
+                </div>
               </div>
             </div>
 
@@ -208,7 +228,6 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
                 <option value="">Select storage location</option>
                 <option value="Refrigerator">Refrigerator</option>
                 <option value="Freezer">Freezer</option>
-                <option value="Freezer">Freezer</option>
                 <option value="Pantry">Pantry</option>
                 <option value="Cabinet">Cabinet</option>
                 <option value="Shelf">Shelf</option>
@@ -219,7 +238,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
             <div>
               <label className="block text-[14px] font-regular text-[#474747] mb-1">
-                Notes
+                Notes (Optional)
               </label>
               <textarea
                 value={formData.notes}
@@ -235,7 +254,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
 
           <div className="flex gap-3 p-6">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 px-4 py-4 border-[0.6px] border-[#DDDDDD] rounded-[10px] text-[#CBCBCB] hover:bg-gray-50 transition-colors font-medium"
             >
               Cancel
@@ -245,7 +264,7 @@ export const EditItemModal: React.FC<EditItemModalProps> = ({
               disabled={!formData.name}
               className="flex-1 px-4 py-4 bg-[#008080] rounded-[10px] text-[#FFFFFF] hover:bg-teal-700 transition-colors font-medium disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              Save Changes
+              Add Item
             </button>
           </div>
         </div>
