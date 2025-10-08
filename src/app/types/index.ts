@@ -15,3 +15,30 @@ export interface Category {
   name: string;
   icon: string;
 }
+
+// Types
+export interface FilterOptions<T extends string = string> {
+  categories: string[];
+  priceRange: { min: number; max: number };
+  sortBy: T;
+  sortOrder: "asc" | "desc";
+}
+
+// Types
+export type MealCategory =
+  | "breakfast"
+  | "lunch"
+  | "dinner"
+  | "snacks"
+  | "appetizers"
+  | "mainCourse"
+  | "desserts";
+
+export interface MealItem {
+  id: number;
+  name: string;
+  calories: number;
+  time: string;
+  eaten: boolean;
+  image: string;
+}

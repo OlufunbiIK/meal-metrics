@@ -1,10 +1,17 @@
 "use client";
 import React, { useState } from "react";
-import { Plus, Edit, Trash2, Calendar, Users, Filter } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Calendar,
+  Users,
+  Filter,
+  Menu,
+  X,
+} from "lucide-react";
 import DashboardLayout from "@/app/layout/DashboardLayout";
-import { useRouter } from "next/navigation";
 
-// Types
 type MealCategory =
   | "breakfast"
   | "lunch"
@@ -43,23 +50,21 @@ interface FiltersState {
 
 interface NewItemState {
   name: string;
-  calories: string; // we keep string here so input binding works smoothly
+  calories: string;
   time: string;
   category: MealCategory;
   image: string;
 }
 
 export default function MealPlanningForm() {
-  const router = useRouter();
-
   const [activeView, setActiveView] = useState<
     "day" | "week" | "month" | "event"
   >("day");
   const [selectedDate, setSelectedDate] = useState("2024-08-20");
-  const [selectedWeek, setSelectedWeek] = useState("2024-08-20");
   const [selectedMonth, setSelectedMonth] = useState("August");
   const [isEventMode, setIsEventMode] = useState(false);
   const [eventName, setEventName] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [meals, setMeals] = useState<MealsState>({
     breakfast: [
@@ -204,12 +209,14 @@ export default function MealPlanningForm() {
     category: MealCategory,
     items: MealItem[]
   ) => (
-    <div className="mb-8 bg-white rounded-lg border border-gray-200 p-6">
+    <div className="mb-6 lg:mb-8 bg-white rounded-lg border border-gray-200 p-4 lg:p-6">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-3">
-          <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
-          <span className="text-sm text-gray-500">
-            {items.reduce((sum, item) => sum + item.calories, 0)} calories
+        <div className="flex items-center gap-2 lg:gap-3">
+          <h3 className="text-lg lg:text-xl font-semibold text-gray-800">
+            {title}
+          </h3>
+          <span className="text-xs lg:text-sm text-gray-500">
+            {items.reduce((sum, item) => sum + item.calories, 0)} cal
           </span>
         </div>
         <button
@@ -219,7 +226,7 @@ export default function MealPlanningForm() {
           }}
           className="text-teal-600 hover:text-teal-800 p-2 rounded-full hover:bg-teal-50"
         >
-          <Plus size={20} />
+          <Plus size={18} className="lg:w-5 lg:h-5" />
         </button>
       </div>
 
@@ -227,19 +234,21 @@ export default function MealPlanningForm() {
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex items-center gap-4 p-3 border rounded-lg hover:bg-gray-50"
+            className="flex items-center gap-3 lg:gap-4 p-3 border rounded-lg hover:bg-gray-50"
           >
-            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gray-100 rounded-lg flex items-center justify-center text-xl lg:text-2xl flex-shrink-0">
               {item.image}
             </div>
 
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900">{item.name}</h4>
-              <p className="text-sm text-gray-600">{item.time}</p>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-medium text-gray-900 text-sm lg:text-base truncate">
+                {item.name}
+              </h4>
+              <p className="text-xs lg:text-sm text-gray-600">{item.time}</p>
               <div className="flex items-center gap-2 mt-1">
                 <button
                   onClick={() => toggleEaten(category, item.id)}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                  className={`w-5 h-5 lg:w-6 lg:h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                     item.eaten
                       ? "bg-teal-600 border-teal-600"
                       : "border-gray-300 hover:border-teal-600"
@@ -250,7 +259,7 @@ export default function MealPlanningForm() {
                   )}
                 </button>
                 <span
-                  className={`text-sm ${
+                  className={`text-xs lg:text-sm ${
                     item.eaten ? "text-teal-600" : "text-gray-500"
                   }`}
                 >
@@ -259,19 +268,20 @@ export default function MealPlanningForm() {
               </div>
             </div>
 
-            <div className="text-right">
-              <div className="text-lg font-medium text-gray-900">
-                {item.calories} calories
+            <div className="text-right flex-shrink-0">
+              <div className="text-sm lg:text-lg font-medium text-gray-900">
+                {item.calories}
               </div>
+              <div className="text-xs text-gray-500">cal</div>
               <div className="flex gap-1 mt-2">
                 <button className="text-gray-400 hover:text-teal-600 p-1">
-                  <Edit size={16} />
+                  <Edit size={14} className="lg:w-4 lg:h-4" />
                 </button>
                 <button
                   onClick={() => deleteMealItem(category, item.id)}
                   className="text-gray-400 hover:text-red-600 p-1"
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={14} className="lg:w-4 lg:h-4" />
                 </button>
               </div>
             </div>
@@ -280,74 +290,168 @@ export default function MealPlanningForm() {
 
         {items.length === 0 && (
           <div className="text-center py-8 text-gray-400">
-            <p>No items added yet</p>
+            <p className="text-sm">No items added yet</p>
           </div>
         )}
       </div>
     </div>
   );
 
-  const handleTabChange = (tab: string) => {
-    console.log(`Switched to: ${tab}`);
-  };
+  const SidebarContent = () => (
+    <div className="space-y-4">
+      <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50 text-sm lg:text-base">
+        <Plus size={16} />
+        Create Menu
+      </button>
+
+      <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50 text-sm lg:text-base">
+        <Users size={16} />
+        Favorites
+      </button>
+
+      <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50 text-sm lg:text-base">
+        <Calendar size={16} />
+        Diet Plans
+      </button>
+
+      <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50 text-sm lg:text-base">
+        <Filter size={16} />
+        Share Menu
+      </button>
+
+      {/* Filters */}
+      <div className="pt-6 border-t border-gray-200">
+        <h4 className="font-semibold text-gray-900 mb-3 text-sm lg:text-base">
+          Filter by Category
+        </h4>
+        <div className="space-y-2">
+          {Object.keys(filters.category).map((filter) => (
+            <label key={filter} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={
+                  filters.category[filter as keyof typeof filters.category]
+                }
+                onChange={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    category: {
+                      ...prev.category,
+                      [filter]:
+                        !prev.category[filter as keyof typeof prev.category],
+                    },
+                  }))
+                }
+                className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+              />
+              <span className="capitalize text-xs lg:text-sm text-gray-700">
+                {filter.replace(/([A-Z])/g, " $1").trim()}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-6 border-t border-gray-200">
+        <h4 className="font-semibold text-gray-900 mb-3 text-sm lg:text-base">
+          Filter by Menu Type
+        </h4>
+        <div className="space-y-2">
+          {Object.keys(filters.menuType).map((filter) => (
+            <label key={filter} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={
+                  filters.menuType[filter as keyof typeof filters.menuType]
+                }
+                onChange={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    menuType: {
+                      ...prev.menuType,
+                      [filter]:
+                        !prev.menuType[filter as keyof typeof prev.menuType],
+                    },
+                  }))
+                }
+                className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+              />
+              <span className="capitalize text-xs lg:text-sm text-gray-700">
+                {filter}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
-    <DashboardLayout activeTab="Dashboard" onTabChange={handleTabChange}>
-      <div className="min-h-screen bg-gray-50">
+    <DashboardLayout activeTab="Dashboard">
+      <div className="min-h-screen bg-white">
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-6">
+        <div className="bg-white border-b border-gray-200 px-3 lg:px-6 py-3 lg:py-4">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3 lg:gap-0">
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2 lg:gap-6 border rounded-lg p-1.5 lg:p-2 border-gray-200 overflow-x-auto">
+                <button
+                  onClick={() => setActiveView("day")}
+                  className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded text-sm whitespace-nowrap ${
+                    activeView === "day"
+                      ? "bg-gray-100 text-gray-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Day
+                </button>
+                <button
+                  onClick={() => setActiveView("week")}
+                  className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded text-sm whitespace-nowrap ${
+                    activeView === "week"
+                      ? "bg-gray-100 text-gray-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Week
+                </button>
+                <button
+                  onClick={() => setActiveView("month")}
+                  className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded text-sm whitespace-nowrap ${
+                    activeView === "month"
+                      ? "bg-gray-100 text-gray-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Month
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveView("event");
+                    setIsEventMode(true);
+                  }}
+                  className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded text-sm whitespace-nowrap ${
+                    activeView === "event"
+                      ? "bg-gray-100 text-gray-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Event
+                </button>
+              </div>
+
               <button
-                onClick={() => setActiveView("day")}
-                className={`px-4 py-2 rounded ${
-                  activeView === "day"
-                    ? "bg-teal-100 text-teal-700"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 text-gray-600 hover:bg-gray-100 rounded"
               >
-                Day
-              </button>
-              <button
-                onClick={() => setActiveView("week")}
-                className={`px-4 py-2 rounded ${
-                  activeView === "week"
-                    ? "bg-teal-100 text-teal-700"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                Week
-              </button>
-              <button
-                onClick={() => setActiveView("month")}
-                className={`px-4 py-2 rounded ${
-                  activeView === "month"
-                    ? "bg-teal-100 text-teal-700"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                Month
-              </button>
-              <button
-                onClick={() => {
-                  setActiveView("event");
-                  setIsEventMode(true);
-                }}
-                className={`px-4 py-2 rounded ${
-                  activeView === "event"
-                    ? "bg-teal-100 text-teal-700"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                Event
+                <Menu size={20} />
               </button>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <select
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="border border-gray-300 rounded px-3 py-2"
+                className="border border-gray-300 text-gray-700 rounded px-3 py-2 text-sm w-full sm:w-auto"
               >
                 <option value="2024-08-20">Aug 20, 2024</option>
                 <option value="2024-08-21">Aug 21, 2024</option>
@@ -360,45 +464,39 @@ export default function MealPlanningForm() {
                   placeholder="Event Name"
                   value={eventName}
                   onChange={(e) => setEventName(e.target.value)}
-                  className="border border-gray-300 rounded px-3 py-2"
+                  className="border border-gray-300 text-gray-700 rounded px-3 py-2 text-sm w-full sm:w-auto"
                 />
               )}
             </div>
           </div>
 
           {activeView === "week" && (
-            <div className="flex gap-4 mt-4 text-sm">
-              {[
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-                "Sunday",
-              ].map((day) => (
-                <button
-                  key={day}
-                  className={`px-3 py-1 rounded ${
-                    day === "Wednesday"
-                      ? "bg-teal-100 text-teal-700 border-b-2 border-teal-600"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  {day}
-                </button>
-              ))}
+            <div className="flex gap-2 lg:gap-4 mt-3 lg:mt-4 text-xs lg:text-sm overflow-x-auto pb-2">
+              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                (day, idx) => (
+                  <button
+                    key={day}
+                    className={`px-2 py-1 lg:px-3 rounded whitespace-nowrap ${
+                      idx === 2
+                        ? "bg-gray-100 text-gray-700 border-b-2 border-teal-600"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    {day}
+                  </button>
+                )
+              )}
             </div>
           )}
         </div>
 
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
-          <div className="flex-1 p-6">
-            <div className="max-w-4xl mx-auto">
+          <div className="flex-1 p-3 lg:p-6">
+            <div className="max-w-6xl mx-auto">
               {/* Title and Summary */}
-              <div className="mb-6">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="mb-4 lg:mb-6">
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
                   {isEventMode
                     ? `${eventName || "Family Reunion"} Menu`
                     : activeView === "month"
@@ -408,10 +506,10 @@ export default function MealPlanningForm() {
                     : `Today's Menu - ${selectedDate}`}
                 </h1>
 
-                <div className="flex gap-6 text-sm text-gray-600">
-                  <span>Total: {getTotalCalories()} Calories</span>
-                  <span>Consumed: {getEatenCalories()} Calories</span>
-                  {activeView === "month" && <span>84 Meals Planned</span>}
+                <div className="flex flex-wrap gap-3 lg:gap-6 text-xs lg:text-sm text-gray-600">
+                  <span>Total: {getTotalCalories()} Cal</span>
+                  <span>Consumed: {getEatenCalories()} Cal</span>
+                  {activeView === "month" && <span>84 Meals</span>}
                   {isEventMode && <span>10 Dishes</span>}
                 </div>
               </div>
@@ -441,49 +539,36 @@ export default function MealPlanningForm() {
                 </>
               )}
 
-              {/* Monthly Summary */}
-              {activeView === "month" && (
-                <div className="bg-white rounded-lg border border-gray-200 p-6 mt-8">
-                  <h3 className="text-lg font-semibold mb-4">
-                    Monthly Summary
+              {/* Monthly/Event Summary */}
+              {(activeView === "month" || isEventMode) && (
+                <div className="bg-white rounded-lg border border-gray-200 p-4 lg:p-6 mt-6 lg:mt-8">
+                  <h3 className="text-lg lg:text-xl font-semibold mb-4 text-gray-800">
+                    {isEventMode ? "Event Summary" : "Monthly Summary"}
                   </h3>
                   <div className="space-y-2 text-sm">
-                    <p>
-                      <span className="font-medium">Monthly Summary:</span> 84
-                      Meals
+                    <p className="text-gray-700">
+                      <span className="font-medium">
+                        {isEventMode ? "Event Summary:" : "Monthly Summary:"}
+                      </span>{" "}
+                      {isEventMode ? "10 Dishes" : "84 Meals"}
                     </p>
-                    <p>
-                      <span className="font-medium">Total:</span> 39200 Calories
-                    </p>
-                    <div className="mt-4">
-                      <p className="font-medium mb-2">
-                        Aggregated Choices for the Month
-                      </p>
-                      <p>Jollof Rice with Chicken: 800</p>
-                      <p>Fried Rice: 600</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Event Summary */}
-              {isEventMode && (
-                <div className="bg-white rounded-lg border border-gray-200 p-6 mt-8">
-                  <h3 className="text-lg font-semibold mb-4">Event Summary</h3>
-                  <div className="space-y-2 text-sm">
-                    <p>
-                      <span className="font-medium">Event Summary:</span> 10
-                      Dishes
-                    </p>
-                    <p>
-                      <span className="font-medium">Total:</span> 6000 Calories
+                    <p className="text-gray-700">
+                      <span className="font-medium">Total:</span>{" "}
+                      {isEventMode ? "6000" : "39200"} Calories
                     </p>
                     <div className="mt-4">
-                      <p className="font-medium mb-2">
-                        Aggregated Choices for the Event
+                      <p className="font-medium mb-2 text-gray-700">
+                        Aggregated Choices for the{" "}
+                        {isEventMode ? "Event" : "Month"}
                       </p>
-                      <p>Amala & Ewedu: 36</p>
-                      <p>Fruit Salad: 30</p>
+                      <p className="text-gray-600">
+                        {isEventMode
+                          ? "Amala & Ewedu: 36"
+                          : "Jollof Rice with Chicken: 800"}
+                      </p>
+                      <p className="text-gray-600">
+                        {isEventMode ? "Fruit Salad: 30" : "Fried Rice: 600"}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -491,98 +576,38 @@ export default function MealPlanningForm() {
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="w-80 bg-white border-l border-gray-200 p-6">
-            <div className="space-y-4">
-              <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50">
-                <Plus size={16} />
-                Create Menu
-              </button>
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block w-80 bg-white border-l border-gray-200 p-6">
+            <SidebarContent />
+          </div>
 
-              <button
-                onClick={() => router.push("/dashboard/favorites")}
-                className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50"
-              >
-                <Users size={16} />
-                Favorites
-              </button>
-
-              <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50">
-                <Calendar size={16} />
-                Diet Plans
-              </button>
-
-              <button className="w-full flex items-center gap-2 text-teal-600 hover:text-teal-800 p-2 rounded hover:bg-teal-50">
-                <Filter size={16} />
-                Share Menu
-              </button>
-
-              {/* Filters */}
-              <div className="pt-6 border-t border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Filter by Category
-                </h4>
-                <div className="space-y-2">
-                  {Object.keys(filters.category).map((filter) => (
-                    <label key={filter} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={filters.category[filter]}
-                        onChange={() =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            category: {
-                              ...prev.category,
-                              [filter]: !prev.category[filter],
-                            },
-                          }))
-                        }
-                        className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
-                      />
-                      <span className="capitalize text-sm text-gray-700">
-                        {filter.replace(/([A-Z])/g, " $1").trim()}
-                      </span>
-                    </label>
-                  ))}
+          {/* Mobile Sidebar */}
+          {sidebarOpen && (
+            <div className="fixed inset-0 z-50 lg:hidden">
+              <div
+                className="absolute inset-0 bg-black bg-opacity-50"
+                onClick={() => setSidebarOpen(false)}
+              ></div>
+              <div className="absolute right-0 top-0 bottom-0 w-72 bg-white p-6 overflow-y-auto">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="font-semibold text-lg">Menu</h3>
+                  <button
+                    onClick={() => setSidebarOpen(false)}
+                    className="p-2 hover:bg-gray-100 rounded"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
-              </div>
-
-              <div className="pt-6 border-t border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3">
-                  Filter by Menu Type
-                </h4>
-                <div className="space-y-2">
-                  {Object.keys(filters.menuType).map((filter) => (
-                    <label key={filter} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        checked={filters.menuType[filter]}
-                        onChange={() =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            menuType: {
-                              ...prev.menuType,
-                              [filter]: !prev.menuType[filter],
-                            },
-                          }))
-                        }
-                        className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
-                      />
-                      <span className="capitalize text-sm text-gray-700">
-                        {filter}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                <SidebarContent />
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Add Item Modal */}
         {showAddForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-96 max-w-lg">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg p-4 lg:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
               <h3 className="text-lg font-semibold mb-4">Add New Item</h3>
               <div className="space-y-4">
                 <div>
@@ -595,7 +620,7 @@ export default function MealPlanningForm() {
                     onChange={(e) =>
                       setNewItem((prev) => ({ ...prev, name: e.target.value }))
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
@@ -612,7 +637,7 @@ export default function MealPlanningForm() {
                         calories: e.target.value,
                       }))
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
@@ -627,7 +652,7 @@ export default function MealPlanningForm() {
                     onChange={(e) =>
                       setNewItem((prev) => ({ ...prev, time: e.target.value }))
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
@@ -640,10 +665,10 @@ export default function MealPlanningForm() {
                     onChange={(e) =>
                       setNewItem((prev) => ({
                         ...prev,
-                        category: e.target.value,
+                        category: e.target.value as MealCategory,
                       }))
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-teal-500 focus:border-teal-500"
                   >
                     <option value="breakfast">Breakfast</option>
                     <option value="lunch">Lunch</option>
@@ -669,7 +694,7 @@ export default function MealPlanningForm() {
                     onChange={(e) =>
                       setNewItem((prev) => ({ ...prev, image: e.target.value }))
                     }
-                    className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-teal-500 focus:border-teal-500"
                     placeholder="🍽️"
                   />
                 </div>
@@ -678,13 +703,13 @@ export default function MealPlanningForm() {
               <div className="flex gap-2 mt-6">
                 <button
                   onClick={addMealItem}
-                  className="flex-1 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                  className="flex-1 bg-teal-600 text-white py-2 px-4 rounded text-sm hover:bg-teal-700 focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                 >
                   Add Item
                 </button>
                 <button
                   onClick={() => setShowAddForm(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded hover:bg-gray-300"
+                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded text-sm hover:bg-gray-300"
                 >
                   Cancel
                 </button>
