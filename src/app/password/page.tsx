@@ -163,9 +163,22 @@ export default function ResetPassword() {
     // Only submit if no errors
     if (!passwordError && !confirmPasswordError) {
       console.log("Form submitted:", formData);
-      // Before redirecting
-      sessionStorage.setItem("signupData", JSON.stringify(formData));
-      // Redirect to password page
+
+      // Get existing signup data (fullName and email from signup page)
+      const existingSignupData = sessionStorage.getItem("signupData");
+      let signupData = existingSignupData ? JSON.parse(existingSignupData) : {};
+
+      // Merge password data with existing signup data
+      signupData = {
+        ...signupData, // This preserves firstName, lastName, fullName, email
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      };
+
+      console.log("Merged signup data:", signupData);
+      sessionStorage.setItem("signupData", JSON.stringify(signupData));
+
+      // Redirect to role selection page
       router.push("/role");
     }
   };
@@ -260,7 +273,7 @@ export default function ResetPassword() {
                   {/* Status indicator */}
                   <div
                     className={`w-4 h-4 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${
-                      requirement.met ? "bg-green-500" : "bg-gray-300"
+                      requirement.met ? "bg-[#008080]" : "bg-gray-300"
                     }`}
                   >
                     {requirement.met && (
@@ -281,7 +294,7 @@ export default function ResetPassword() {
                   <span
                     className={`text-sm transition-colors ${
                       requirement.met
-                        ? "text-green-700 font-medium"
+                        ? "text-[#008080] font-medium"
                         : "text-gray-600"
                     }`}
                   >
@@ -298,7 +311,7 @@ export default function ResetPassword() {
           disabled={!isFormValid()}
           className={`w-full py-3 sm:py-4 rounded-xl font-medium transition-all duration-200 mt-4 sm:mt-6 ${
             isFormValid()
-              ? "bg-teal-500 text-white hover:bg-teal-600 cursor-pointer"
+              ? "bg-[#008080] text-white hover:bg-teal-600 cursor-pointer"
               : "bg-[#EBEBEB] text-gray-400 cursor-not-allowed"
           }`}
         >

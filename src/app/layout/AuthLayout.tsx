@@ -14,8 +14,8 @@ interface AuthLayoutProps {
   backgroundImageUrl?: string;
   selectedRole?: string;
   selectedExperience?: string;
-  onRoleChange?: (val: string) => void;
-  onExperienceChange?: (val: string) => void;
+  onRoleChange?: (value: string) => void;
+  onExperienceChange?: (value: string) => void;
 }
 
 export default function AuthLayout({
@@ -28,9 +28,17 @@ export default function AuthLayout({
   showRoleForm = false,
   showForgotPassword = false,
   backgroundImageUrl,
+  selectedRole: propSelectedRole,
+  selectedExperience: propSelectedExperience,
+  onRoleChange,
+  onExperienceChange,
 }: AuthLayoutProps) {
-  const [selectedRole, setSelectedRole] = React.useState("");
-  const [selectedExperience, setSelectedExperience] = React.useState("");
+  const [selectedRole, setSelectedRole] = React.useState(
+    propSelectedRole || ""
+  );
+  const [selectedExperience, setSelectedExperience] = React.useState(
+    propSelectedExperience || ""
+  );
 
   // Default background image if none provided
   const defaultBackground =
@@ -110,7 +118,10 @@ export default function AuthLayout({
                     <select
                       id="experience"
                       value={selectedExperience}
-                      onChange={(e) => setSelectedExperience(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedExperience(e.target.value);
+                        onExperienceChange?.(e.target.value);
+                      }}
                       className="w-full px-3 py-4 border border-[#DBDFE4] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-sm text-[#808A9A]"
                     >
                       <option value="">Select Roles</option>
@@ -137,7 +148,10 @@ export default function AuthLayout({
                             name="role"
                             value={role}
                             checked={selectedRole === role}
-                            onChange={(e) => setSelectedRole(e.target.value)}
+                            onChange={(e) => {
+                              setSelectedRole(e.target.value);
+                              onRoleChange?.(e.target.value);
+                            }}
                             className="w-4 h-4 text-green-600 border-green-500 focus:ring-green-500"
                           />
 

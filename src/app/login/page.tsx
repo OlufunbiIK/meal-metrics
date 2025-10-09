@@ -134,31 +134,52 @@ export default function Login() {
 
       // For local storage approach (no API)
       try {
-        // Check if this is a user coming from signup flow
-        const signupData = UserDataManager.getAllUserData();
+        // Get signup data from sessionStorage
+        const signupDataStr = sessionStorage.getItem("signupData");
+        const roleDataStr = sessionStorage.getItem("roleData");
 
-        if (signupData.firstName || signupData.email) {
-          // This is a new user completing signup flow
-          // Finalize their data by moving from session to local storage
-          const userData = UserDataManager.finalizeUserData();
+        console.log("signupDataStr:", signupDataStr);
+        console.log("roleDataStr:", roleDataStr);
 
-          // Store a simple auth token (you can make this more sophisticated)
-          localStorage.setItem("authToken", "logged-in-" + Date.now());
+        let userData;
 
-          console.log("User data finalized:", userData);
+        if (signupDataStr) {
+          // This is a user coming from signup flow
+          const signupData = JSON.parse(signupDataStr);
+          const roleData = roleDataStr ? JSON.parse(roleDataStr) : {};
+
+          console.log("Parsed signupData:", signupData);
+          console.log("Parsed roleData:", roleData);
+
+          // Combine signup and role data
+          userData = {
+            firstName: signupData.firstName || "",
+            lastName: signupData.lastName || "",
+            fullName:
+              signupData.fullName ||
+              `${signupData.firstName || ""} ${
+                signupData.lastName || ""
+              }`.trim(),
+            email: signupData.email || formData.email,
+            role: roleData.role || "User",
+          };
         } else {
           // This is an existing user - for now, we'll create a simple user object
           // In a real app, you'd validate credentials against your database
-          const userData = {
+          userData = {
             firstName: "Returning",
             lastName: "User",
             fullName: "Returning User",
             email: formData.email,
             role: "User",
           };
-          localStorage.setItem("userData", JSON.stringify(userData));
-          localStorage.setItem("authToken", "logged-in-" + Date.now());
         }
+
+        console.log("Final userData to be stored:", userData);
+
+        // Store user data in localStorage
+        localStorage.setItem("userData", JSON.stringify(userData));
+        localStorage.setItem("authToken", "logged-in-" + Date.now());
 
         // Redirect to dashboard
         router.push("/dashboard");
@@ -205,7 +226,7 @@ export default function Login() {
         <div className="text-center w-full flex justify-end">
           <a
             href="./forgot-password"
-            className="text-sm text-teal-500 hover:text-teal-600 font-medium"
+            className="text-sm text-[#008080] hover:text-teal-600 font-medium"
           >
             Forgot Password?
           </a>
@@ -217,7 +238,7 @@ export default function Login() {
           disabled={!isFormValid()}
           className={`w-full py-3 sm:py-4 rounded-xl font-medium transition-all duration-200 mt-2 sm:mt-2 ${
             isFormValid()
-              ? "bg-teal-500 text-white hover:bg-teal-600 cursor-pointer"
+              ? "bg-[#008080] text-white hover:bg-teal-600 cursor-pointer"
               : "bg-[#EBEBEB] text-white cursor-not-allowed"
           }`}
         >
@@ -272,7 +293,7 @@ export default function Login() {
         New to Kitchen?
         <a
           href="./signup"
-          className="text-teal-500 ml-1 hover:text-teal-600 font-medium"
+          className="text-[#008080] ml-1 hover:text-teal-600 font-medium"
         >
           Create Account
         </a>

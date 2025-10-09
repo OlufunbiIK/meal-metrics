@@ -108,8 +108,23 @@ export default function RestaurantSignup() {
     // Only submit if no errors
     if (!fullnameError && !emailError) {
       console.log("Form submitted:", formData);
-      // Before redirecting
-      sessionStorage.setItem("signupData", JSON.stringify(formData));
+
+      // Split fullname into firstName and lastName
+      const nameParts = formData.fullname.trim().split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      // Store in the format expected by login
+      const signupData = {
+        firstName: firstName,
+        lastName: lastName,
+        fullName: formData.fullname,
+        email: formData.email,
+      };
+
+      console.log("Storing signup data:", signupData);
+      sessionStorage.setItem("signupData", JSON.stringify(signupData));
+
       // Redirect to password page
       router.push("/password");
     }
@@ -120,7 +135,7 @@ export default function RestaurantSignup() {
       Already have an account?{" "}
       <a
         href="./login"
-        className="text-teal-500 hover:text-teal-600 font-medium"
+        className="text-[#008080] hover:text-teal-600 font-medium"
       >
         Sign In
       </a>
@@ -161,7 +176,7 @@ export default function RestaurantSignup() {
           disabled={!isFormValid()}
           className={`w-full py-3 sm:py-4 rounded-xl font-medium transition-all duration-200 mt-4 sm:mt-6 ${
             isFormValid()
-              ? "bg-teal-500 text-white hover:bg-teal-600 cursor-pointer"
+              ? "bg-[#008080] text-white hover:bg-teal-600 cursor-pointer"
               : "bg-[#EBEBEB] text-white cursor-not-allowed"
           }`}
         >

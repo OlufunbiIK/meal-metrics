@@ -140,7 +140,7 @@ export default function RoleAndPreference() {
       Already have an account?{" "}
       <a
         href="/login"
-        className="text-teal-500 hover:text-teal-600 font-medium"
+        className="text-[#008080] hover:text-teal-600 font-medium"
       >
         Sign In
       </a>
@@ -155,10 +155,12 @@ export default function RoleAndPreference() {
       backArrow={true}
       onBackClick={handleBackClick}
       showRoleForm={true}
+      selectedRole={formData.role}
+      selectedExperience={formData.role}
+      onRoleChange={(val) => setFormData({ ...formData, role: val })}
+      onExperienceChange={(val) => setFormData({ ...formData, role: val })}
     >
       <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
-        {/* Role Selection Dropdown */}
-
         <FormInput
           type="text"
           name="allergies"
@@ -186,7 +188,7 @@ export default function RoleAndPreference() {
           disabled={!isFormValid()}
           className={`w-full py-3 sm:py-4 rounded-xl font-medium transition-all duration-200 mt-4 sm:mt-6 ${
             isFormValid()
-              ? "bg-teal-500 text-white hover:bg-teal-600 cursor-pointer"
+              ? "bg-[#008080] text-white hover:bg-teal-600 cursor-pointer"
               : "bg-[#EBEBEB] text-white cursor-not-allowed"
           }`}
         >
