@@ -43,12 +43,12 @@ export default function RoleAndPreference() {
     return "";
   };
 
-  // Check if form is valid
   const isFormValid = () => {
     return (
       formData.role &&
       formData.preferences &&
       formData.allergies &&
+      !validateRole(formData.role) &&
       !validateAllergies(formData.allergies) &&
       !validatePreferences(formData.preferences)
     );
@@ -69,6 +69,7 @@ export default function RoleAndPreference() {
       let error = "";
       if (name === "allergies") error = validateAllergies(value);
       if (name === "preferences") error = validatePreferences(value);
+      if (name === "role") error = validateRole(value);
 
       setErrors({
         ...errors,
@@ -91,6 +92,7 @@ export default function RoleAndPreference() {
     let error = "";
     if (name === "allergies") error = validateAllergies(value);
     if (name === "preferences") error = validatePreferences(value);
+    if (name === "role") error = validateRole(value);
 
     setErrors({
       ...errors,
