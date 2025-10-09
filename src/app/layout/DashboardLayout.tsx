@@ -106,7 +106,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   }, []);
 
   const handleTabClick = (item: SidebarItem) => {
-    setCurrentActiveTab(item);
+    // Find the matching item from sidebarItems which has the title
+    const fullItem = sidebarItems.find((si) => si.href === item.href);
+    if (fullItem) {
+      setCurrentActiveTab(fullItem);
+    }
     if (onTabChange) {
       onTabChange(item.label);
     }

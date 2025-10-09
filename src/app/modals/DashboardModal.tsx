@@ -182,7 +182,10 @@ const MealPlansModal: React.FC<MealPlansModalProps> = ({
 
             {/* Pagination */}
             <Pagination
+              currentPage={1}
               totalPages={10}
+              totalEntries={100}
+              entriesPerPage={10}
               onPageChange={(p: any) => console.log("Page:", p)}
             />
           </div>

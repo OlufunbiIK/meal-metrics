@@ -12,14 +12,17 @@ export default function RoleAndPreference() {
   const [formData, setFormData] = useState({
     allergies: "",
     preferences: "",
+    role: "",
   });
 
   const [errors, setErrors] = useState({
+    role: "",
     allergies: "",
     preferences: "",
   });
 
   const [touched, setTouched] = useState({
+    role: false, // Add this
     allergies: false,
     preferences: false,
   });
@@ -43,6 +46,7 @@ export default function RoleAndPreference() {
   // Check if form is valid
   const isFormValid = () => {
     return (
+      formData.role &&
       formData.preferences &&
       formData.allergies &&
       !validateAllergies(formData.allergies) &&
@@ -99,23 +103,24 @@ export default function RoleAndPreference() {
 
     // Mark all fields as touched
     setTouched({
+      role: true, // Add this
       allergies: true,
       preferences: true,
     });
 
     // Validate all fields
+    const roleError = validateRole(formData.role); // Add this
     const allergiesError = validateAllergies(formData.allergies);
     const preferencesError = validatePreferences(formData.preferences);
 
     setErrors({
+      role: roleError, // Add this
       allergies: allergiesError,
       preferences: preferencesError,
     });
 
     // Only submit if no errors
-    if (!allergiesError && !preferencesError) {
-      console.log("Form submitted:", formData);
-
+    if (!roleError && !allergiesError && !preferencesError) {
       // Store the role and preference data using the helper
       UserDataManager.storeRoleData(formData);
 

@@ -5,9 +5,9 @@ import React from "react";
 interface AuthLayoutProps {
   children: React.ReactNode;
   title: string;
-  subtitle?: string;
   progressBarSrc?: string;
   backArrow?: boolean;
+  subtitle?: string | React.ReactNode;
   onBackClick?: () => void;
   showRoleForm?: boolean;
   showForgotPassword?: boolean;

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { Heart, Clock, Loader2 } from "lucide-react";
-import { useFavorites } from "../hooks/useFavourite"; // Adjust path as needed
+import { useFavorites } from "../hooks/useFavourite";
+
+type Recipe = {
+  id: number;
+  name: string;
+  image?: string;
+  [key: string]: any;
+};
 
 export const PopularRecipe = () => {
   const [loadMoreRecipes, setLoadMoreRecipes] = useState(false);
@@ -234,7 +241,8 @@ export const PopularRecipe = () => {
     ? [...recipes, ...moreRecipes]
     : recipes;
 
-  const toggleFavorite = (recipe: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const toggleFavorite = (recipe: Recipe) => {
     if (!recipe || !recipe.id) {
       console.error("Invalid recipe data:", recipe);
       return;

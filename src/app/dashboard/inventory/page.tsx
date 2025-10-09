@@ -82,7 +82,14 @@ const ConfirmationModal: React.FC<{
 
 export default function Inventory() {
   const [items, setItems] = useState<InventoryItem[]>(
-    inventoryItems.map((item, index) => ({ ...item, id: index.toString() }))
+    inventoryItems.map((item, index) => ({
+      ...item,
+      id: index.toString(),
+      quantity:
+        typeof item.quantity === "string"
+          ? parseInt(item.quantity)
+          : item.quantity,
+    }))
   );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<Filters>({
@@ -142,7 +149,7 @@ export default function Inventory() {
     setViewMore(null);
   };
 
-  const handleSaveEdit = (updatedForm: FormData) => {
+  const handleSaveEdit = (updatedForm: any) => {
     if (!selectedItem) return;
 
     setItems((prev) =>

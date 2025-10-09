@@ -27,6 +27,7 @@ export interface SidebarItem {
   icon: any;
   label: string;
   href: string;
+  title?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({

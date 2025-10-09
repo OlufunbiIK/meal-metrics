@@ -172,7 +172,8 @@ export default function ResetPassword() {
 
   const handleBackClick = () => {
     // Form-specific logic here
-    router.back("./signup"); // or navigate('/previous-step')
+    router.back(); // or navigate('/previous-step')
+    router.push("/signup");
   };
 
   const subtitle = (

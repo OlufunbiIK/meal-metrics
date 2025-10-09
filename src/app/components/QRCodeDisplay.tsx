@@ -1,5 +1,3 @@
-// components/QRCodeDisplay.tsx (For the QR Code display page)
-
 "use clients";
 import React from "react";
 import { ShoppingItem } from "@/app/types";
