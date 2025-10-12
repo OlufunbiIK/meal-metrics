@@ -195,7 +195,7 @@ export default function AuthLayout({
         <div className="hidden lg:block bg-white w-[0.5px] h-screen"></div>
 
         {/* Right Panel - Text Content - Desktop only */}
-        <div className="hidden lg:flex flex-1 items-end justify-end p-8 xl:p-12 pb-12 xl:pb-16">
+        <div className="hidden lg:flex flex-1 items-end justify-end p-8 xl:p-12 pb-12 lg:pb-36 xl:pb-40">
           <div className="w-full text-left">
             <h2 className="text-2xl xl:text-4xl font-bold text-white mb-4 xl:mb-6 leading-tight">
               Manage inventory, menus, and staff schedules all in one place
