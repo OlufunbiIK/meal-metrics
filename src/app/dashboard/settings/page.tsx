@@ -29,7 +29,7 @@ const Settings = () => {
     new: "",
     confirm: "",
   });
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const languages = [
     "English (US)",
@@ -202,23 +202,13 @@ const Settings = () => {
     setPasswordData({ current: "", new: "", confirm: "" });
   };
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageData = e.target.result;
-        setProfileImage(imageData);
-
-        // Save to localStorage
-        localStorage.setItem("profileImage", imageData);
-
-        // Dispatch event to update header
-        window.dispatchEvent(
-          new CustomEvent("profileImageUpdated", {
-            detail: { profileImage: imageData },
-          })
-        );
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+        localStorage.setItem("profileImage", reader.result as string);
       };
       reader.readAsDataURL(file);
     }
