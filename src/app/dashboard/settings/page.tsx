@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, Mail, Lock, Bell, Globe, LogOut, Camera } from "lucide-react";
 import DashboardLayout from "@/app/layout/DashboardLayout";
 
 const Settings = () => {
   const [userData, setUserData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    role: "administrator",
+    firstName: "",
+    lastName: "",
+    fullName: "",
+    email: "",
+    role: "",
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
+    firstName: "",
+    lastName: "",
+    email: "",
   });
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -41,7 +41,81 @@ const Settings = () => {
     "Japanese",
   ];
 
-  const handleInputChange = (e) => {
+  // Load user data from localStorage/sessionStorage on component mount
+  useEffect(() => {
+    const loadUserData = () => {
+      try {
+        // Try localStorage first (after login)
+        let storedData = localStorage.getItem("userData");
+
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setUserData(parsedData);
+          setEditedData({
+            firstName: parsedData.firstName || "",
+            lastName: parsedData.lastName || "",
+            email: parsedData.email || "",
+          });
+          return;
+        }
+
+        // Fallback to sessionStorage
+        const signupData = sessionStorage.getItem("signupData");
+        const roleData = sessionStorage.getItem("roleData");
+
+        if (signupData) {
+          const parsedSignup = JSON.parse(signupData);
+          const parsedRole = roleData ? JSON.parse(roleData) : {};
+
+          const combinedData = {
+            firstName: parsedSignup.firstName || "",
+            lastName: parsedSignup.lastName || "",
+            fullName:
+              parsedSignup.fullName ||
+              `${parsedSignup.firstName || ""} ${
+                parsedSignup.lastName || ""
+              }`.trim(),
+            email: parsedSignup.email || "",
+            role: parsedRole.role || "User",
+          };
+
+          setUserData(combinedData);
+          setEditedData({
+            firstName: combinedData.firstName,
+            lastName: combinedData.lastName,
+            email: combinedData.email,
+          });
+
+          // Save to localStorage for persistence
+          localStorage.setItem("userData", JSON.stringify(combinedData));
+        }
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    loadUserData();
+
+    // Load profile image if exists
+    const savedImage = localStorage.getItem("profileImage");
+    if (savedImage) {
+      setProfileImage(savedImage);
+    }
+
+    // Load notification preference
+    const notifPref = localStorage.getItem("notificationsEnabled");
+    if (notifPref !== null) {
+      setNotificationsEnabled(notifPref === "true");
+    }
+
+    // Load language preference
+    const langPref = localStorage.getItem("selectedLanguage");
+    if (langPref) {
+      setSelectedLanguage(langPref);
+    }
+  }, []);
+
+  const handleInputChange = (e: any) => {
     const { name, value } = e.target;
     setEditedData({
       ...editedData,
@@ -60,6 +134,31 @@ const Settings = () => {
 
     setUserData(updatedData);
     setIsEditing(false);
+
+    // Update localStorage
+    localStorage.setItem("userData", JSON.stringify(updatedData));
+
+    // Also update sessionStorage for backward compatibility
+    const existingSignupData = sessionStorage.getItem("signupData");
+    if (existingSignupData) {
+      const parsedSignup = JSON.parse(existingSignupData);
+      const updatedSignupData = {
+        ...parsedSignup,
+        firstName: editedData.firstName,
+        lastName: editedData.lastName,
+        fullName: `${editedData.firstName} ${editedData.lastName}`,
+        email: editedData.email,
+      };
+      sessionStorage.setItem("signupData", JSON.stringify(updatedSignupData));
+    }
+
+    // Dispatch a custom event to notify Header component
+    window.dispatchEvent(
+      new CustomEvent("userDataUpdated", {
+        detail: updatedData,
+      })
+    );
+
     alert("Profile updated successfully!");
   };
 
@@ -72,7 +171,7 @@ const Settings = () => {
     setIsEditing(false);
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: any) => {
     const { name, value } = e.target;
     setPasswordData({
       ...passwordData,
@@ -89,6 +188,15 @@ const Settings = () => {
       alert("Password must be at least 8 characters long!");
       return;
     }
+
+    // Store password (in real app, this would be sent to backend)
+    const currentUserData = localStorage.getItem("userData");
+    if (currentUserData) {
+      const parsedData = JSON.parse(currentUserData);
+      parsedData.password = passwordData.new;
+      localStorage.setItem("userData", JSON.stringify(parsedData));
+    }
+
     alert("Password changed successfully!");
     setShowPasswordModal(false);
     setPasswordData({ current: "", new: "", confirm: "" });
@@ -99,23 +207,55 @@ const Settings = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileImage(e.target.result);
+        const imageData = e.target.result;
+        setProfileImage(imageData);
+
+        // Save to localStorage
+        localStorage.setItem("profileImage", imageData);
+
+        // Dispatch event to update header
+        window.dispatchEvent(
+          new CustomEvent("profileImageUpdated", {
+            detail: { profileImage: imageData },
+          })
+        );
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleNotificationToggle = () => {
+    const newValue = !notificationsEnabled;
+    setNotificationsEnabled(newValue);
+    localStorage.setItem("notificationsEnabled", newValue.toString());
+  };
+
+  const handleLanguageSelect = (lang: string) => {
+    setSelectedLanguage(lang);
+    setShowLanguageModal(false);
+    localStorage.setItem("selectedLanguage", lang);
+  };
+
   const handleLogout = () => {
     if (confirm("Are you sure you want to logout?")) {
+      // Clear all stored data
+      localStorage.removeItem("userData");
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("profileImage");
+      localStorage.removeItem("notificationsEnabled");
+      localStorage.removeItem("selectedLanguage");
+      sessionStorage.removeItem("signupData");
+      sessionStorage.removeItem("roleData");
+
       alert("Logged out successfully!");
-      // In a real app, this would redirect to login
+      window.location.href = "/login";
     }
   };
 
   return (
     <DashboardLayout activeTab="Dashboard">
       <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl">
           {/* Header */}
           <div className="mb-6">
             <h1 className="text-2xl lg:text-3xl font-bold text-[#333333]">
@@ -168,10 +308,10 @@ const Settings = () => {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-semibold text-[#333333]">
-                  {userData.fullName}
+                  {userData.fullName || "User Name"}
                 </h3>
                 <p className="text-sm text-[#333333] opacity-70 capitalize">
-                  {userData.role}
+                  {userData.role || "User"}
                 </p>
               </div>
             </div>
@@ -192,7 +332,7 @@ const Settings = () => {
                     className={`w-full px-4 py-3 rounded-lg border text-[#333333] ${
                       isEditing
                         ? "border-gray-300 focus:ring-2 focus:ring-[#008080] focus:border-transparent"
-                        : "border-gray-200 bg-gray-50"
+                        : "border-gray-200 bg-gray-50 cursor-not-allowed opacity-60"
                     } outline-none transition-all`}
                   />
                 </div>
@@ -210,7 +350,7 @@ const Settings = () => {
                     className={`w-full px-4 py-3 rounded-lg border text-[#333333] ${
                       isEditing
                         ? "border-gray-300 focus:ring-2 focus:ring-[#008080] focus:border-transparent"
-                        : "border-gray-200 bg-gray-50"
+                        : "border-gray-200 cursor-not-allowed bg-gray-50"
                     } outline-none transition-all`}
                   />
                 </div>
@@ -229,7 +369,7 @@ const Settings = () => {
                   className={`w-full px-4 py-3 rounded-lg border text-[#333333] ${
                     isEditing
                       ? "border-gray-300 focus:ring-2 focus:ring-[#008080] focus:border-transparent"
-                      : "border-gray-200 bg-gray-50"
+                      : "border-gray-200 cursor-not-allowed bg-gray-50"
                   } outline-none transition-all`}
                 />
               </div>
@@ -242,7 +382,7 @@ const Settings = () => {
                   type="text"
                   value={userData.role}
                   disabled
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 outline-none capitalize text-[#333333]"
+                  className="w-full px-4 cursor-not-allowed py-3 rounded-lg border border-gray-200 bg-gray-50 outline-none capitalize text-[#333333]"
                 />
               </div>
             </div>
@@ -313,9 +453,7 @@ const Settings = () => {
                     type="checkbox"
                     className="sr-only peer"
                     checked={notificationsEnabled}
-                    onChange={() =>
-                      setNotificationsEnabled(!notificationsEnabled)
-                    }
+                    onChange={handleNotificationToggle}
                   />
                   <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#008080]"></div>
                 </label>
@@ -431,10 +569,7 @@ const Settings = () => {
                 {languages.map((lang) => (
                   <button
                     key={lang}
-                    onClick={() => {
-                      setSelectedLanguage(lang);
-                      setShowLanguageModal(false);
-                    }}
+                    onClick={() => handleLanguageSelect(lang)}
                     className={`w-full text-left px-4 py-3 rounded-lg transition-colors ${
                       selectedLanguage === lang
                         ? "bg-[#008080] text-white"
